@@ -1,0 +1,57 @@
+https://www.codingninjas.com/codestudio/problems/frog-jump
+
+
+//recursive approach gives tle as overlapping sub problems are present
+t.c:O(2^n)
+s.c:O(n) for recursive stack
+
+public static int frogJump(int n, int heights[]) {
+	        
+	        return solve(n-1,heights);
+	    }
+	    public static int solve(int n,int h[],int dp[]){
+	        if(n==0)
+	        return 0;
+	       
+	        int one_step=solve(n-1,h)+Math.abs(h[n]-h[n-1]);
+	        int two_step=Integer.MAX_VALUE;
+	        if(n>1)
+	        two_step=solve(n-2,h)+Math.abs(h[n]-h[n-2]);
+
+	        return Math.min(one_step,two_step);
+	    }
+
+//using dp of memeoization
+//time complexity : O(n)
+//space complexity :O(n)+O(n) recursive stack space + dp array
+package dpseries;
+import java.util.*;
+public class l3frogJumpCodeStudio {
+
+	public static void main(String[] args) {
+		int n=4;
+		int arr[]= {10, 20 ,30, 10};
+		System.out.println("Minimum energy required is :");
+		System.out.println(frogJump(n,arr));
+
+	}
+	    public static int frogJump(int n, int heights[]) {
+	        int dp[]=new int[n+1];
+	        Arrays.fill(dp,-1);
+	        return solve(n-1,heights,dp);
+	    }
+	    public static int solve(int n,int h[],int dp[]){
+	        if(n==0)
+	        return 0;
+	        if(dp[n]!=-1)
+	        return dp[n];
+	        int one_step=solve(n-1,h,dp)+Math.abs(h[n]-h[n-1]);
+	        int two_step=Integer.MAX_VALUE;
+	        if(n>1)
+	        two_step=solve(n-2,h,dp)+Math.abs(h[n]-h[n-2]);
+
+	        return dp[n]=Math.min(one_step,two_step);
+	    }
+
+}
+
