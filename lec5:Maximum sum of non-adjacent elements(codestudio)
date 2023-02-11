@@ -1,0 +1,105 @@
+link : https://www.codingninjas.com/codestudio/problems/maximum-sum-of-non-adjacent-elements
+example :
+Sample Input 1:
+2
+3
+1 2 4
+4
+2 1 4 9
+
+approach-1 ( brute force : recursion)
+gives tle : t.c =O(2^n) s.c =O(1)
+import java.util.* ;
+import java.io.*; 
+import java.util.*;
+public class Solution {
+	public static int maximumNonAdjacentSum(ArrayList<Integer> nums) {
+		int n=nums.size();
+		return find(nums,n-1);
+	}
+	static int find(ArrayList<Integer> nums,int n){
+		if(n==0)
+		return nums.get(n);
+		if(n<0)
+		return 0;
+
+		int take=nums.get(n)+find(nums,n-2);
+		int notTake=0+find(nums,n-1);
+
+		return Math.max(take,notTake);
+	}
+}
+//approach-2(memoization of overlaping subproblem)
+//t.c =O(n) , s.c=O(n)+O(n)
+import java.util.* ;
+import java.io.*; 
+import java.util.*;
+public class Solution {
+	public static int maximumNonAdjacentSum(ArrayList<Integer> nums) {
+		int n=nums.size();
+		int dp[]=new int[n];
+		Arrays.fill(dp,-1);
+		return find(nums,n-1,dp);
+	}
+	static int find(ArrayList<Integer> nums,int n,int dp[]){
+		if(n==0)
+		return nums.get(n);
+		if(n<0)
+		return 0;
+		if(dp[n]!=-1)
+		return dp[n];
+
+		int take=nums.get(n)+find(nums,n-2,dp);
+		int notTake=0+find(nums,n-1,dp);
+
+		return dp[n]=Math.max(take,notTake);
+	}
+}
+//approach-3(tabulation)
+t.c=O(n) , s.c=O(n)
+import java.util.* ;
+import java.io.*; 
+import java.util.*;
+public class Solution {
+	public static int maximumNonAdjacentSum(ArrayList<Integer> nums) {
+		int n=nums.size();
+		int dp[]=new int[n];
+		Arrays.fill(dp,0);
+		dp[0]=nums.get(0);
+		int neg=0;
+		for(int i=1;i<n;i++){
+			int take=nums.get(i);
+			if(i>1)
+			take=take+dp[i-2];
+
+			int notTake=0+dp[i-1];
+			dp[i]=Math.max(take,notTake);
+		}
+		return dp[n-1];
+	}
+	
+}
+//optimization of tabulation form
+As for curent result we just need last two result . So space com. reduced to O(1)
+import java.util.* ;
+import java.io.*; 
+import java.util.*;
+public class Solution {
+	public static int maximumNonAdjacentSum(ArrayList<Integer> nums) {
+		int n=nums.size();
+		int prev=nums.get(0);
+		int prev2=0;
+		for(int i=1;i<n;i++){
+			int take=nums.get(i);
+			if(i>1)
+			take=take+prev2;
+
+			int notTake=0+prev;
+			int cur=Math.max(take,notTake);
+			prev2=prev;
+			prev=cur;
+		}
+		return prev;
+	}
+	
+}
