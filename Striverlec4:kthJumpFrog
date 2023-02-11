@@ -1,0 +1,39 @@
+package dpseries;
+import java.util.*;
+public class l4kthStepFrogJump {//atcoder dp list
+
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+        int n;
+        n=sc.nextInt();
+        int k=sc.nextInt();
+        int h[]=new int[n];
+        for(int i=0;i<n;i++) {
+            h[i]=sc.nextInt();
+        }
+        int dp[]=new int[n+1];
+        Arrays.fill(dp,-1);
+        dp[0]=0;
+        //dp[1]=0;
+        minimumCost(n,h,dp,k);
+        System.out.println(dp[n-1]);
+    }
+ 
+    private static void minimumCost(int n, int[] h, int[] dp,int k) {
+        for(int i=1;i<n;i++){
+            int minStep=Integer.MAX_VALUE;
+            for(int j=1;j<=k;j++){
+                if(i-j>=0){
+                    int step=dp[i-j]+Math.abs(h[i-j]-h[i]);
+                    minStep=Math.min(minStep,step);
+                    //System.out.println("Min step"+minStep);
+                }else
+                    break;
+            }
+ 
+            dp[i]=minStep;
+            //System.out.println(dp[i]);
+        }
+    }
+
+}
