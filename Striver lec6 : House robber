@@ -1,0 +1,40 @@
+Circular array which contains money amount of each house and a thief wants to rob the city and he should not robbed adjacent house.
+
+//similar to lec-5 question maximumsumofnonadjacent element.
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+	public static long houseRobber(int[] valueInHouse) {
+		//as it is circuar array so we can take first or last at a time
+		int n=valueInHouse.length;
+		if(n==1)
+		return (long)valueInHouse[0];
+		int first[]=new int[n-1];
+		int last[]=new int[n-1];
+		int ind1=0;
+		int ind2=0;
+		for(int i=0;i<n;i++){
+			if(i!=0)
+			last[ind1++]=valueInHouse[i];
+			if(i!=n-1)
+			first[ind2++]=valueInHouse[i];
+		}
+		return Math.max(solution(first),solution(last));		
+	}	
+	static long solution(int a[]){
+		int size=a.length;
+		long prev=a[0];
+		long prev2=0;
+		for(int i=1;i<size;i++){
+			long take=a[i];
+			if(i>1)
+			take+=prev2;
+			long notTake=0+prev;
+
+			long cur=Math.max(take,notTake);
+			prev2=prev;
+			prev=cur;
+		}
+		return prev;
+	}
+}
