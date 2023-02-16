@@ -1,0 +1,116 @@
+//approach -1
+class Solution {
+    public int minPathSum(int[][] grid) {
+        //here we call from bottom to up so we move up and left
+
+        //brute force approach gives tle
+        //t.c : O(2^(m*n))
+        //s.c :O(path length) that is row-1+col-1
+        return findAns(grid.length-1,grid[0].length-1,grid);
+    }
+    int findAns(int row,int col,int[][] grid){
+        if(row==0 && col==0)
+        return grid[0][0];
+
+        if(row<0 || col<0)
+        return Integer.MAX_VALUE;
+int up=Integer.MAX_VALUE;
+int left=Integer.MAX_VALUE;
+        if(row>0)
+         up=grid[row][col]+findAns(row-1,col,grid);
+        if(col>0)
+         left=grid[row][col]+findAns(row,col-1,grid);
+
+        return Math.min(up,left);
+    }
+}
+//approach-2(optimization of brute force)
+class Solution {
+    public int minPathSum(int[][] grid) {
+        //here we call from bottom to up so we move up and left
+
+        //optimization of recursion by memoization
+        //t.c : O(2^(m*n))
+        //s.c :O(path length)+O(m*n) 
+        int dp[][]=new int[grid.length][grid[0].length];
+        for(int i=0;i<grid.length;i++){
+            for(int j=0;j<grid[0].length;j++){
+                dp[i][j]=-1;
+            }
+        }
+        return findAns(grid.length-1,grid[0].length-1,grid,dp);
+    }
+    int findAns(int row,int col,int[][] grid,int dp[][]){
+        if(row==0 && col==0)
+        return grid[0][0];
+
+        if(row<0 || col<0)
+        return Integer.MAX_VALUE;
+
+        if(dp[row][col]!=-1)
+        return dp[row][col];
+        int up=Integer.MAX_VALUE;
+        int left=Integer.MAX_VALUE;
+        if(row>0)
+         up=grid[row][col]+findAns(row-1,col,grid,dp);
+        if(col>0)
+         left=grid[row][col]+findAns(row,col-1,grid,dp);
+
+        return dp[row][col]=Math.min(up,left);
+    }
+}
+//approach-3(tabulation)
+class Solution {
+    public int minPathSum(int[][] grid) {
+        //tabulation
+        //here the extra stack space reduced
+        //t.c =s.c=O(m*n)
+        int row=grid.length;
+        int col=grid[0].length;
+        int dp[][]=new int[row][col];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(i==0 && j==0)
+                dp[i][j]=grid[0][0];
+                else{
+                    int up=Integer.MAX_VALUE;
+                    int left=Integer.MAX_VALUE;
+                    if(i>0)up=grid[i][j]+dp[i-1][j];
+                    if(j>0)left=grid[i][j]+dp[i][j-1];
+
+                    dp[i][j]=Math.min(up,left);
+                }
+            }
+        }
+        return dp[row-1][col-1];
+    }
+}
+
+//approach-4(space optimization of tabulation)
+class Solution {
+    public int minPathSum(int[][] grid) {
+        //space optimisation of tabulation
+       
+        //t.c =O(m*n) s.c =O(1)
+        int row=grid.length;
+        int col=grid[0].length;
+        int prev[]=new int[col];
+        for(int i=0;i<row;i++){
+            int cur[]=new int[col];
+            for(int j=0;j<col;j++){
+                if(i==0 && j==0)
+                cur[j]=grid[0][0];
+                else{
+                    int up=Integer.MAX_VALUE;
+                    int left=Integer.MAX_VALUE;
+                    if(i>0)up=grid[i][j]+prev[j];
+                    if(j>0)left=grid[i][j]+cur[j-1];
+
+                    cur[j]=Math.min(up,left);
+                }
+            }
+            prev=cur;
+        }
+        return prev[col-1];
+    }
+}
