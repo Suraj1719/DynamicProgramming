@@ -1,0 +1,145 @@
+//RECURSIVE APPROACH GIVES TLE
+class Solution {
+    public int minFallingPathSum(int[][] matrix) {
+        int res[]=new int[matrix[0].length];
+        int n=matrix.length;
+        int m=matrix[0].length;
+
+        for(int i=0;i<m;i++){
+            res[i]=find(n-1,i,matrix);
+        }
+        int ans=res[0];
+        for(int i=1;i<m;i++){
+            ans=Math.min(ans,res[i]);
+        }
+        return ans;
+    }
+    int find(int i,int j,int[][] m){
+        //base case
+        if(j<0 || j>=m[0].length)
+        return 10000000;
+
+        if(i==0)
+        return m[0][j];
+        int up=10000000;
+        int ld=10000000;
+        int rd=10000000;
+        up=m[i][j]+find(i-1,j,m);
+        if(j>0)
+        ld=m[i][j]+find(i-1,j-1,m);
+        if(j+1<m[0].length)
+        rd=m[i][j]+find(i-1,j+1,m);
+        return Math.min(up,Math.min(ld,rd));
+
+    }
+}
+
+//OPTIMISATION OF RECURSION USING MEMOIZATION
+class Solution {
+    public int minFallingPathSum(int[][] matrix) {
+        int res[]=new int[matrix[0].length];
+        int n=matrix.length;
+        int m=matrix[0].length;
+int dp[][]=new int[n][m];
+for(int i=0;i<n;i++){
+    for(int j=0;j<m;j++){
+        dp[i][j]=-1;
+    }
+}
+        for(int i=0;i<m;i++){
+            res[i]=find(n-1,i,matrix,dp);
+        }
+        int ans=res[0];
+        for(int i=1;i<m;i++){
+            ans=Math.min(ans,res[i]);
+        }
+        return ans;
+    }
+    int find(int i,int j,int[][] m,int dp[][]){
+        //base case
+        if(j<0 || j>=m[0].length)
+        return 10000000;
+
+        if(i==0)
+        return m[0][j];
+        if(dp[i][j]!=-1)
+        return dp[i][j];
+        int up=10000000;
+        int ld=10000000;
+        int rd=10000000;
+        up=m[i][j]+find(i-1,j,m,dp);
+        if(j>0)
+        ld=m[i][j]+find(i-1,j-1,m,dp);
+        if(j+1<m[0].length)
+        rd=m[i][j]+find(i-1,j+1,m,dp);
+        return dp[i][j]=Math.min(up,Math.min(ld,rd));
+
+    }
+}
+
+//TABULATION APPROACH
+class Solution {
+    public int minFallingPathSum(int[][] matrix) {
+        //tabulation to remove extra stack space required in memoization
+        int n=matrix.length;
+        int m=matrix[0].length;
+        int dp[][]=new int[n][m];
+        for(int col=0;col<m;col++){
+            dp[0][col]=matrix[0][col];
+        }
+        for(int i=1;i<n;i++){
+            for(int j=0;j<m;j++){
+                int up=Integer.MAX_VALUE;
+                int ld=Integer.MAX_VALUE;
+                int rd=Integer.MAX_VALUE;
+                up=matrix[i][j]+dp[i-1][j];
+                if(j>0)
+                ld=matrix[i][j]+dp[i-1][j-1];
+                if(j+1<m)
+                rd=matrix[i][j]+dp[i-1][j+1];
+
+                dp[i][j]=Math.min(up,Math.min(ld,rd));
+            }
+
+        }
+        int res=dp[n-1][0];
+        for(int i=1;i<m;i++){
+res=Math.min(res,dp[n-1][i]);
+        }
+        return res;
+    }
+}
+
+//OPTIMISATION OF TABULATION
+class Solution {
+    public int minFallingPathSum(int[][] matrix) {
+        //optimisation to tabulation 
+        int n=matrix.length;
+        int m=matrix[0].length;
+        int prev[]=new int[m];
+        for(int col=0;col<m;col++){
+            prev[col]=matrix[0][col];
+        }
+        for(int i=1;i<n;i++){
+            int cur[]=new int[m];
+            for(int j=0;j<m;j++){
+                int up=Integer.MAX_VALUE;
+                int ld=Integer.MAX_VALUE;
+                int rd=Integer.MAX_VALUE;
+                up=matrix[i][j]+prev[j];
+                if(j>0)
+                ld=matrix[i][j]+prev[j-1];
+                if(j+1<m)
+                rd=matrix[i][j]+prev[j+1];
+
+                cur[j]=Math.min(up,Math.min(ld,rd));
+            }
+prev=cur;
+        }
+        int res=prev[0];
+        for(int i=1;i<m;i++){
+res=Math.min(res,prev[i]);
+        }
+        return res;
+    }
+}
