@@ -1,0 +1,60 @@
+//Recursive approach
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static boolean subsetSumToK(int n, int k, int arr[]){
+        // Write your code here.
+        int i=n-1;
+        return recursion(i,n,k,arr);
+    }
+    public static boolean recursion(int ind,int n, int k, int arr[]){
+        if(k==0)
+        return true;
+        if(ind==0)
+        return k==arr[0];
+
+        //take or not take
+        boolean take=false;
+        if(k>=arr[ind])
+        take=recursion(ind-1,n,k-arr[ind],arr);
+
+        boolean not_take=recursion(ind-1,n,k,arr);
+    return take || not_take;
+    
+    }
+}
+//memoization 
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static boolean subsetSumToK(int n, int k, int arr[]){
+        // Write your code here.
+        int dp[][]=new int[n][k+1];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<=k;j++){
+                dp[i][j]=-1;
+            }
+        }
+        int i=n-1;
+        return recursion(i,n,k,arr,dp)==1;
+    }
+    public static int recursion(int ind,int n, int k, int arr[],
+    int dp[][]){
+        if(k==0)
+        return 1;
+        if(ind==0)
+        return k==arr[0]?1:0;
+
+        if(dp[ind][k]!=-1)
+        return dp[ind][k];
+
+        //take or not take
+        int take=0;
+        if(k>=arr[ind])
+        take=recursion(ind-1,n,k-arr[ind],arr,dp);
+
+        int not_take=recursion(ind-1,n,k,arr,dp);
+    return dp[ind][k]= take | not_take;
+    
+    }
+}
