@@ -58,3 +58,36 @@ public class Solution {
     
     }
 }
+//tabulation
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static boolean subsetSumToK(int n, int k, int arr[]){
+        // Write your code here.
+        //tabulation
+        boolean dp[][]=new boolean[n][1010];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],false);
+        }
+        //base case index=0 to n-1 and target=0 , it gives true
+        for(int i=0;i<n;i++){
+            dp[i][0]=true;
+        }
+        //again in row=0 if we get remaining target , it give true
+        dp[0][arr[0]]=true;
+        //nested loop
+        for(int i=1;i<n;i++){
+            for(int target=1;target<=k;target++){
+                boolean nottake=dp[i-1][target];
+                boolean take=false;
+                if(arr[i]<=target)
+                take=dp[i-1][target-arr[i]];
+
+                dp[i][target]=take|nottake;
+
+            }
+        }
+        return dp[n-1][k];
+    }
+}
+
