@@ -1,0 +1,49 @@
+package dpseries;
+
+public class lec16CSPartitionasetintotwosubsetssuchthatthedifferenceofsubsetsumsisminimum {
+	
+	//hard problem on code studio and interviewbit
+	//extention of lec 15 problem
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int a[]= {2,7,4,9,3,11,15};
+		System.out.println(minSubsetSumDifference(a,a.length));
+
+	}
+	public static int minSubsetSumDifference(int[] arr, int n) {
+		// Write your code here.
+		int totalSum=0;
+		for(int i=0;i<n;i++){
+			totalSum+=arr[i];
+		}
+		boolean dp[][]=new boolean[n][totalSum+1];
+		for(int i=0;i<n;i++){
+			dp[i][0]=true;
+		}
+		if(arr[0]<=totalSum)
+		dp[0][arr[0]]=true;
+
+		for(int i=1;i<n;i++){
+			for(int tar=1;tar<=totalSum;tar++){
+				boolean notTake=dp[i-1][tar];
+				boolean take=false;
+				if(tar>=arr[i])
+				take=dp[i-1][tar-arr[i]];
+
+				dp[i][tar]=notTake|take;
+			}
+		}
+
+		//last row give all the ans
+		int res=Integer.MAX_VALUE;
+		for(int s1=0;s1<=totalSum;s1++){
+			if(dp[n-1][s1]==true){
+				res=Math.min(res,Math.abs(s1-(totalSum-s1)));
+
+			}
+		}
+		return res;
+	}
+
+}
