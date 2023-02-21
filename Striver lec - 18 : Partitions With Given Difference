@@ -1,0 +1,205 @@
+//recursive approach
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+	public static int countPartitions(int n, int d, int[] arr) {
+		// Write your code here.
+		int totalSum=0;
+		for(int i=0;i<n;i++)
+		totalSum+=arr[i];
+
+		if(totalSum-d<0 || (totalSum-d)%2==1)
+		return 0;
+
+		return findWays(n,(totalSum-d)/2,arr);
+	}
+	static int findWays(int n, int d, int[] a){
+		//brute force 
+        //t.c = O(2^n)  and space =O(n) stack space
+        //gives TLE
+
+        return countWays(n-1,d,a);
+
+	}
+	static int countWays(int n,int sum,int num[]){
+        // if(sum==0)//at any index if we have sum==0, it return 1
+        // return 1;
+
+        if(n==0){
+			if(sum==0 && num[0]==0)
+			return 2;
+
+			if(sum==0 || sum==num[0])
+			return 1;
+
+			return 0;
+
+		}
+       
+
+        int notTake=countWays(n-1,sum,num);
+        int take=0;
+        if(num[n]<=sum)
+        take=countWays(n-1,sum-num[n],num);
+
+        return take+notTake;
+
+    }
+}
+
+//optimization using memoization
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int mod=1000000007;
+	public static int countPartitions(int n, int d, int[] arr) {
+		// Write your code here.
+		int totalSum=0;
+		for(int i=0;i<n;i++)
+		totalSum+=arr[i];
+//s1+s2=totalsum
+//s1=totalsum-s2     so s1-s2=d =>  
+//totalsum-2*s2=d => s2=(totalsum-d)/2
+		if(totalSum-d<0 || (totalSum-d)%2==1)
+		return 0;
+
+		return findWays(n,(totalSum-d)/2,arr);
+	}
+	static int findWays(int n, int d, int[] a){
+		//brute force 
+        //t.c = O(n*d)  and space =O(n*d)+O(n) stack space
+        //gives TLE
+		int dp[][]=new int[n][d+1];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        return countWays(n-1,d,a,dp)%mod;
+
+	}
+	static int countWays(int n,int sum,int num[],int dp[][]){
+        // if(sum==0)//at any index if we have sum==0, it return 1
+        // return 1;
+
+        if(n==0){
+			if(sum==0 && num[0]==0)
+			return 2;
+
+			if(sum==0 || sum==num[0])
+			return 1;
+
+			return 0;
+
+		}
+       if(dp[n][sum]!=-1)
+	   return dp[n][sum];
+
+        int notTake=countWays(n-1,sum,num,dp)%mod;
+        int take=0;
+        if(num[n]<=sum)
+        take=countWays(n-1,sum-num[n],num,dp)%mod;
+
+        return dp[n][sum]=(take+notTake)%mod;
+
+    }
+}
+
+//tabulation for removing extra stack space used in memoization
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int mod=1000000007;
+	public static int countPartitions(int n, int d, int[] arr) {
+		// Write your code here.
+		int totalSum=0;
+		for(int i=0;i<n;i++)
+		totalSum+=arr[i];
+//s1+s2=totalsum
+//s1=totalsum-s2     so s1-s2=d =>  
+//totalsum-2*s2=d => s2=(totalsum-d)/2
+		if(totalSum-d<0 || (totalSum-d)%2==1)
+		return 0;
+
+		return findWays(n,(totalSum-d)/2,arr);
+	}
+	static int findWays(int n, int d, int[] a){
+		//tabulation to romove extra stack space in memoization 
+        //t.c = O(n*d)  and space =O(n*d)
+        //gives TLE
+		
+        int dp[][]=new int[n][d+1];
+
+        if(a[0]==0)
+		dp[0][0]=2;
+		else
+		dp[0][0]=1;
+
+        if(a[0]!=0 && a[0]<=d)
+        dp[0][a[0]]=1;
+
+        for(int i=1;i<n;i++){
+            for(int j=0;j<=d;j++){
+        int notTake=dp[i-1][j]%mod;
+        int take=0;
+        if(a[i]<=j)
+        take=dp[i-1][j-a[i]];
+
+        dp[i][j]=(take+notTake)%mod;
+            }
+        }
+        return dp[n-1][d]%mod;
+
+	}
+
+}
+//optimization of space in  tabulation method
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int mod=1000000007;
+	public static int countPartitions(int n, int d, int[] arr) {
+		// Write your code here.
+		int totalSum=0;
+		for(int i=0;i<n;i++)
+		totalSum+=arr[i];
+//s1+s2=totalsum
+//s1=totalsum-s2     so s1-s2=d =>  
+//totalsum-2*s2=d => s2=(totalsum-d)/2
+		if(totalSum-d<0 || (totalSum-d)%2==1)
+		return 0;
+
+		return findWays(n,(totalSum-d)/2,arr);
+	}
+	static int findWays(int n, int d, int[] a){
+		//optimization of tabulation  
+        //t.c = O(n*d)  and space =O(1) nearly
+        //gives TLE
+		
+        int prev[]=new int[d+1];
+
+        if(a[0]==0)
+		prev[0]=2;
+		else
+		prev[0]=1;
+
+        if(a[0]!=0 && a[0]<=d)
+        prev[a[0]]=1;
+
+        for(int i=1;i<n;i++){
+			int cur[]=new int[d+1];
+
+            for(int j=0;j<=d;j++){
+        int notTake=prev[j]%mod;
+        int take=0;
+        if(a[i]<=j)
+        take=prev[j-a[i]];
+
+        cur[j]=(take+notTake)%mod;
+            }
+			prev=cur;
+        }
+        return prev[d]%mod;
+
+	}
+
+}
