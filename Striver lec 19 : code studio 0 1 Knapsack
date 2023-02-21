@@ -1,0 +1,177 @@
+//recursion gives TLE
+import java.util.* ;
+import java.io.*; 
+
+public class Solution{
+    static int knapsack(int[] weight, int[] value, int n, int maxWeight) {
+
+            /* Your class should be named Solution
+            * Don't write main().
+            * Don't read input, it is passed as function argument.
+            * Change in the given tree itself.
+            * No need to return or print the output.
+            * Taking input and printing output is handled automatically.
+            */
+    return solve(n-1, weight, value, maxWeight);
+
+    }
+    static int solve(int n,int[] weight, int[] value, int maxWeight){
+        //recursive approach gives TLE
+        //time complexity : O(2^n)
+        //space complexity : O(n) stack space
+        if(n==0){
+            if(weight[0]<=maxWeight)
+            return value[0];
+            else return 0;
+        }
+        int notTake=0+solve(n-1,weight,value,maxWeight);
+        int take=Integer.MIN_VALUE;
+        if(weight[n]<=maxWeight)
+        take=value[n]+solve(n-1,weight,value,maxWeight-weight[n]);
+
+        return Math.max(take,notTake);
+    }
+}
+//memoization
+import java.util.* ;
+import java.io.*; 
+
+public class Solution{
+    static int knapsack(int[] weight, int[] value, int n, int maxWeight) {
+
+            /* Your class should be named Solution
+            * Don't write main().
+            * Don't read input, it is passed as function argument.
+            * Change in the given tree itself.
+            * No need to return or print the output.
+            * Taking input and printing output is handled automatically.
+            */
+            int dp[][]=new int[n][maxWeight+1];
+            for(int i=0;i<n;i++){
+                Arrays.fill(dp[i],-1);
+            }
+    return solve(n-1, weight, value, maxWeight,dp);
+
+    }
+    static int solve(int n,int[] weight, int[] value, int maxWeight,
+    int dp[][]){
+        //memoization 
+        //time complexity : O(n*weight)
+        //space complexity : O(n*weight)+O(n) stack space
+        if(n==0){
+            if(weight[0]<=maxWeight)
+            return value[0];
+            else return 0;
+        }
+        if(dp[n][maxWeight]!=-1)
+        return dp[n][maxWeight];
+        int notTake=0+solve(n-1,weight,value,maxWeight,dp);
+        int take=Integer.MIN_VALUE;
+        if(weight[n]<=maxWeight)
+        take=value[n]+solve(n-1,weight,value,maxWeight-weight[n],dp);
+
+        return dp[n][maxWeight]=Math.max(take,notTake);
+    }
+}
+//tabulation to remove extra stack space taken by memoization
+import java.util.* ;
+import java.io.*; 
+
+public class Solution{
+    static int knapsack(int[] weight, int[] value, int n, int maxWeight) {
+
+            /* Your class should be named Solution
+            * Don't write main().
+            * Don't read input, it is passed as function argument.
+            * Change in the given tree itself.
+            * No need to return or print the output.
+            * Taking input and printing output is handled automatically.
+            */
+        int dp[][]=new int[n][maxWeight+1];
+        for(int i=weight[0];i<=maxWeight;i++){
+            dp[0][i]=value[0];
+        }
+        for(int i=1;i<n;i++){
+            for(int w=0;w<=maxWeight;w++){
+                int notTake=0+dp[i-1][w];
+                int take=Integer.MIN_VALUE;
+                if(weight[i]<=w)
+                take=value[i]+dp[i-1][w-weight[i]];
+
+                dp[i][w]=Math.max(take,notTake);
+            }
+        }
+        return dp[n-1][maxWeight];
+
+    }
+}
+//optimization of tabulation space complexity reduces as we use only two array
+import java.util.* ;
+import java.io.*; 
+
+public class Solution{
+    static int knapsack(int[] weight, int[] value, int n, int maxWeight) {
+
+            /* Your class should be named Solution
+            * Don't write main().
+            * Don't read input, it is passed as function argument.
+            * Change in the given tree itself.
+            * No need to return or print the output.
+            * Taking input and printing output is handled automatically.
+            */
+            //optimization of tabulation
+        int prev[]=new int[maxWeight+1];
+        for(int i=weight[0];i<=maxWeight;i++){
+            prev[i]=value[0];
+        }
+        for(int i=1;i<n;i++){
+            int cur[]=new int[maxWeight+1];
+            for(int w=0;w<=maxWeight;w++){
+                int notTake=0+prev[w];
+                int take=Integer.MIN_VALUE;
+                if(weight[i]<=w)
+                take=value[i]+prev[w-weight[i]];
+
+                cur[w]=Math.max(take,notTake);
+            }
+            prev=cur;
+        }
+        return prev[maxWeight];
+
+    }
+}
+//most optimized only using one array
+import java.util.* ;
+import java.io.*; 
+
+public class Solution{
+    static int knapsack(int[] weight, int[] value, int n, int maxWeight) {
+
+            /* Your class should be named Solution
+            * Don't write main().
+            * Don't read input, it is passed as function argument.
+            * Change in the given tree itself.
+            * No need to return or print the output.
+            * Taking input and printing output is handled automatically.
+            */
+            //optimization of tabulation
+        int prev[]=new int[maxWeight+1];
+        for(int i=weight[0];i<=maxWeight;i++){
+            prev[i]=value[0];
+        }
+        for(int i=1;i<n;i++){
+            //int cur[]=new int[maxWeight+1];
+            for(int w=maxWeight;w>=0;w--){
+                int notTake=0+prev[w];
+                int take=Integer.MIN_VALUE;
+                if(weight[i]<=w)
+                take=value[i]+prev[w-weight[i]];
+
+                prev[w]=Math.max(take,notTake);
+            }
+            //prev=cur;
+        }
+        return prev[maxWeight];
+
+    }
+}
