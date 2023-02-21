@@ -1,0 +1,125 @@
+//recursive approach gives Tle
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int findWays(int num[], int tar) {
+        // Write your code here..
+        //brute force 
+        //t.c = O(2^n)  and space =O(n) stack space
+        //gives TLE
+
+        return NumberOfSubset(num.length-1,tar,num);
+    }
+    static int NumberOfSubset(int n,int sum,int num[]){
+        if(sum==0)//at any index if we have sum==0, it return 1
+        return 1;
+
+        if(n==0)
+        return sum==num[0]?1:0;//at 0 index if remaining sum==num[0]
+
+        int notTake=NumberOfSubset(n-1,sum,num);
+        int take=0;
+        if(num[n]<=sum)
+        take=NumberOfSubset(n-1,sum-num[n],num);
+
+        return take+notTake;
+
+    }
+}
+
+//memoization on recursive approach
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int findWays(int num[], int tar) {
+        // Write your code here..
+        //brute force 
+        //t.c = O(n*tar)  and space =O(n*tar)+O(n) extra stack space
+        
+        int n=num.length;
+        int dp[][]=new int[n][tar+1];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        return NumberOfSubset(n-1,tar,num,dp);
+    }
+    static int NumberOfSubset(int n,int sum,int num[],int dp[][]){
+        if(sum==0)//at any index if we have sum==0, it return 1
+        return 1;
+
+        if(n==0)
+        return sum==num[0]?1:0;//at 0 index if remaining sum==num[0]
+
+        if(dp[n][sum]!=-1)
+        return dp[n][sum];
+
+        int notTake=NumberOfSubset(n-1,sum,num,dp);
+        int take=0;
+        if(num[n]<=sum)
+        take=NumberOfSubset(n-1,sum-num[n],num,dp);
+
+        return dp[n][sum]=take+notTake;
+
+    }
+}
+
+//tabulation approach to reduce extra stack space used in memoization
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int findWays(int num[], int tar) {
+        // Write your code here..
+        int n=num.length;
+        int dp[][]=new int[n][tar+1];
+        for(int i=0;i<n;i++){
+            dp[i][0]=1;//at any index if tar==0 it return 1
+        }
+        if(num[0]<=tar)
+        dp[0][num[0]]=1;
+
+        for(int i=1;i<n;i++){
+            for(int j=0;j<=tar;j++){
+        int notTake=dp[i-1][j];
+        int take=0;
+        if(num[i]<=j)
+        take=dp[i-1][j-num[i]];
+
+        dp[i][j]=take+notTake;
+            }
+        }
+        return dp[n-1][tar];
+    }
+}
+
+//optimization of tabulation
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int findWays(int num[], int tar) {
+        // Write your code here..
+
+        //optimization of tabulation
+        int n=num.length;
+        int prev[]=new int[tar+1];
+        
+        prev[0]=1;//at any index if tar==0 it return 1
+        
+        if(num[0]<=tar)
+        prev[num[0]]=1;
+
+        for(int i=1;i<n;i++){
+            int cur[]=new int[tar+1];
+            for(int j=0;j<=tar;j++){
+        int notTake=prev[j];
+        int take=0;
+        if(num[i]<=j)
+        take=prev[j-num[i]];
+
+        cur[j]=take+notTake;
+            }
+            prev=cur;
+        }
+        return prev[tar];
+    }
+}
