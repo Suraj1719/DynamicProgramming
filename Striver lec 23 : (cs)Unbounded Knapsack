@@ -1,0 +1,128 @@
+//Same as 0-1 knapsack . Here we take as many time we can , to a element but in case of 0-1 knap sack we take one time
+
+//recursion gives tle
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int unboundedKnapsack(int n, int w, int[] profit, int[] weight) {
+        // Write your code here.
+        return solve(n-1, weight, profit, w);
+    }
+    static int solve(int n,int[] weight, int[] value, int maxWeight){
+        //recursive approach gives TLE
+        //time complexity : O(2^n)
+        //space complexity : O(n) stack space
+        if(n==0){
+            if(weight[0]<=maxWeight)
+            return value[0]*(maxWeight/weight[0]);
+            else 
+            return 0;
+        }
+        int notTake=0+solve(n-1,weight,value,maxWeight);
+        int take=Integer.MIN_VALUE;
+        if(weight[n]<=maxWeight){
+            //here index donot change as we take as much as possible time 
+        take=value[n]+solve(n,weight,value,maxWeight-weight[n]);
+        }
+
+        return Math.max(take,notTake);
+    }
+}
+//memoization of recursive approach
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int unboundedKnapsack(int n, int w, int[] profit, int[] weight) {
+        // Write your code here.
+        int dp[][]=new int[n][w+1];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        return solve(n-1, weight, profit, w,dp);
+    }
+    static int solve(int n,int[] weight, int[] value, int maxWeight,
+    int dp[][]){
+        //memoization approach 
+        //time complexity : O(n*w)
+        //space complexity :O(n*w)+ O(n) stack space
+        if(n==0){
+            if(weight[0]<=maxWeight)
+            return value[0]*(maxWeight/weight[0]);
+            else 
+            return 0;
+        }
+        if(dp[n][maxWeight]!=-1)
+        return dp[n][maxWeight];
+        int notTake=0+solve(n-1,weight,value,maxWeight,dp);
+        int take=Integer.MIN_VALUE;
+        if(weight[n]<=maxWeight){
+            //here index donot change as we take as much as possible time 
+        take=value[n]+solve(n,weight,value,maxWeight-weight[n],dp);
+        }
+
+        return dp[n][maxWeight]=Math.max(take,notTake);
+    }
+}
+//tabulation
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int unboundedKnapsack(int n, int w, int[] profit, int[] weight) {
+        // tabulation to redeuce extra stack space on memoization
+        //t.c = O(n*w)=s.c
+        int dp[][]=new int[n][w+1];
+        for(int space=0;space<=w;space++){
+            if(space>=weight[0])
+            dp[0][space]=profit[0]*(space/weight[0]);
+            else
+            dp[0][space]=0;
+        }
+
+        for(int i=1;i<n;i++){
+            for(int space=0;space<=w;space++){
+                int notTake=dp[i-1][space];
+                int take=Integer.MIN_VALUE;
+                if(weight[i]<=space)
+                take=profit[i]+dp[i][space-weight[i]];
+
+                dp[i][space]=Math.max(take,notTake);
+            }
+        }
+        return dp[n-1][w];
+
+    }
+}
+//optimization of tabulation
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int unboundedKnapsack(int n, int w, int[] profit, int[] weight) {
+        // optimization of tabulation 
+        //t.c = O(n*w) s.c=O(2*w)
+        int prev[]=new int[w+1];
+        for(int space=0;space<=w;space++){
+            if(space>=weight[0])
+            prev[space]=profit[0]*(space/weight[0]);
+            else
+            prev[space]=0;
+        }
+
+        for(int i=1;i<n;i++){
+            int cur[]=new int[w+1];
+            for(int space=0;space<=w;space++){
+                int notTake=prev[space];
+                int take=Integer.MIN_VALUE;
+                if(weight[i]<=space)
+                take=profit[i]+cur[space-weight[i]];
+
+                cur[space]=Math.max(take,notTake);
+            }
+            prev=cur;
+        }
+        return prev[w];
+
+    }
+}
+
+
+
