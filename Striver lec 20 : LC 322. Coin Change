@@ -1,0 +1,144 @@
+//RECURSION
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int max_val=100000000;
+    static int f(int ind,int target,int num[]){
+        if(ind==0){
+            if(target%num[0]==0)
+            return target/num[0];
+            
+            return max_val;
+        }
+        int notTake=f(ind-1,target,num);
+        int take=max_val;
+        if(num[ind]<=target)
+        take=1+f(ind,target-num[ind],num);
+
+        return Math.min(take,notTake);
+    }
+    public static int minimumElements(int num[], int x) {
+        // Write your code here..
+        //recursive approach
+        //t.c =O(2^n) s.c=O(tar)  gives TLE
+        int n=num.length;
+        int ans= f(n-1,x,num);
+        if(ans>=max_val)
+        return -1;
+        return ans;
+    }
+
+}
+//MEMOIZATION 
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int max_val=100000000;
+    static int f(int ind,int target,int num[],int dp[][]){
+        if(ind==0){
+            if(target%num[0]==0)
+            return target/num[0];
+            
+            return max_val;
+        }
+        if(dp[ind][target]!=-1)
+        return dp[ind][target];
+        int notTake=f(ind-1,target,num,dp);
+        int take=max_val;
+        if(num[ind]<=target)
+        take=1+f(ind,target-num[ind],num,dp);
+
+        return dp[ind][target]=Math.min(take,notTake);
+    }
+    public static int minimumElements(int num[], int x) {
+        // Write your code here..
+        //memoization approach
+        //t.c =O(n*target) s.c=O(n*target)+O(target)  
+        int n=num.length;
+        int dp[][]=new int[n][x+1];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        int ans= f(n-1,x,num,dp);
+        if(ans>=max_val)
+        return -1;
+        return ans;
+    }
+
+}
+//TABULATION
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int max_val=100000000;
+    public static int minimumElements(int num[], int x) {
+        
+        //tabulation to remove extra stack space used in memoization
+        int n=num.length;
+        int dp[][]=new int[n][x+1];
+        //base case
+        //at index 0 , if any target value is divisible by num[0], we get ans
+        for(int target=0;target<=x;target++){
+            if(target%num[0]==0)
+            dp[0][target]=target/num[0];
+            else
+            dp[0][target]=max_val;//as we have to return min value
+        }
+
+        for(int i=1;i<n;i++){
+            for(int tar=0;tar<=x;tar++){
+                int notTake=dp[i-1][tar];
+                int take=max_val;
+                if(num[i]<=tar)
+                take=1+dp[i][tar-num[i]];
+
+                dp[i][tar]=Math.min(take,notTake);
+            }
+        }
+        int ans=dp[n-1][x];
+        if(ans>=max_val)
+        return -1;
+
+        return ans;
+    }
+
+}
+//SPACE OPTIMIZATION ON TABULATION
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    static int max_val=100000000;
+    public static int minimumElements(int num[], int x) {
+        // Write your code here..
+        //optimization of tabulation
+        int n=num.length;
+        int prev[]=new int[x+1];
+        //base case
+        //at index 0 , if any target value is divisible by num[0], we get ans
+        for(int target=0;target<=x;target++){
+            if(target%num[0]==0)
+            prev[target]=target/num[0];
+            else
+            prev[target]=max_val;//as we have to return min value
+        }
+
+        for(int i=1;i<n;i++){
+            int cur[]=new int[x+1];
+            for(int tar=0;tar<=x;tar++){
+                int notTake=prev[tar];
+                int take=max_val;
+                if(num[i]<=tar)
+                take=1+cur[tar-num[i]];
+
+                cur[tar]=Math.min(take,notTake);
+            }
+            prev=cur;
+        }
+        int ans=prev[x];
+        if(ans>=max_val)
+        return -1;
+
+        return ans;
+    }
+
+}
