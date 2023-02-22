@@ -1,0 +1,122 @@
+//recursion
+public class Solution {
+	static int f(int ind,int d[],int val){
+		if(ind==0){
+			if(val%d[0]==0)
+			return 1;
+			else 
+			return 0;
+		}
+		int notTake=f(ind-1,d,val);
+		int take=0;
+		if(d[ind]<=val)
+		take=f(ind,d,val-d[ind]);//as possible times we can take
+
+		return take+notTake;
+	}
+
+	public static long countWaysToMakeChange(int denominations[], int value){
+        //recursion gives tle
+		//t.c = exponential
+		//s.c =O(target)
+		int n=denominations.length;
+		return f(n-1,denominations,value);			
+
+	}
+	
+}
+//memoization
+public class Solution {
+	static long f(int ind,int d[],int val,long dp[][]){
+		if(ind==0){
+			if(val%d[0]==0)
+			return 1;
+			else 
+			return 0;
+		}
+		if(dp[ind][val]!=-1)
+		return dp[ind][val];
+		long notTake=f(ind-1,d,val,dp);
+		long take=0;
+		if(d[ind]<=val)
+		take=f(ind,d,val-d[ind],dp);//as possible times we can take
+
+		return dp[ind][val]=take+notTake;
+	}
+
+	public static long countWaysToMakeChange(int denominations[], int value){
+        //memoization gives tle
+		//t.c = O(n*target)
+		//s.c =O(n*target)+O(target)
+		int n=denominations.length;
+		long dp[][]=new long[n][value+1];
+		for(int i=0;i<n;i++){
+			for(int j=0;j<=value;j++)
+			dp[i][j]=-1;
+		}
+		return f(n-1,denominations,value,dp);			
+
+	}
+	}
+  //tabulation
+  public class Solution {
+    public static long countWaysToMakeChange(int d[], int value){
+        //tabulation gives tle
+		//t.c = O(n*target)
+		//s.c =O(n*target)
+		int n=d.length;
+		long dp[][]=new long[n][value+1];
+		for(int tar=0;tar<=value;tar++){
+			if(tar%d[0]==0)
+			dp[0][tar]=1;
+			else
+			dp[0][tar]=0;
+		}
+
+		for(int i=1;i<n;i++){
+			for(int t=0;t<=value;t++){
+        long notTake=dp[i-1][t];
+		long take=0;
+		if(d[i]<=t)
+		take=dp[i][t-d[i]];
+
+		dp[i][t]=take+notTake;
+			}
+		}		
+return dp[n-1][value];
+	}
+	
+}
+//optimization of tabulation
+
+
+public class Solution {
+    public static long countWaysToMakeChange(int d[], int value){
+        //optimization of tabulation gives tle
+		//t.c = O(n*target)
+		//s.c =O(n*target)
+		int n=d.length;
+		long prev[]=new long[value+1];
+		for(int tar=0;tar<=value;tar++){
+			if(tar%d[0]==0)
+			prev[tar]=1;
+			else
+			prev[tar]=0;
+		}
+
+		for(int i=1;i<n;i++){
+			long cur[]=new long[value+1];
+			for(int t=0;t<=value;t++){
+        long notTake=prev[t];
+		long take=0;
+		if(d[i]<=t)
+		take=cur[t-d[i]];
+
+		cur[t]=take+notTake;
+			}
+			prev=cur;
+		}		
+return prev[value];
+	}
+	
+}
