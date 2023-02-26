@@ -1,0 +1,112 @@
+//recursive
+public class Solution {
+	static int f(int ind,int n,int []p){
+		if(ind==0){
+			return n*p[0];
+		}
+		int notTake=0+f(ind-1,n,p);
+		int take=-1000000;
+		int rodlen=ind+1;
+		if(rodlen<=n){
+			take=p[ind]+f(ind,n-rodlen,p);
+		}
+		return Math.max(take,notTake);
+	}
+	public static int cutRod(int price[], int n) {
+		// Write your code here.
+		//recursive approach give tle
+		//time com.=O(exponential)
+		//space com.=O(target)
+		return f(n-1,n,price);
+	}
+}
+//memoization
+public class Solution {
+	static int f(int ind,int n,int []p,int dp[][]){
+		if(ind==0){
+			return n*p[0];
+		}
+		if(dp[ind][n]!=-1)
+		return dp[ind][n];
+		int notTake=0+f(ind-1,n,p,dp);
+		int take=-1000000;
+		int rodlen=ind+1;
+		if(rodlen<=n){
+			take=p[ind]+f(ind,n-rodlen,p,dp);
+		}
+		return dp[ind][n]=Math.max(take,notTake);
+	}
+	public static int cutRod(int price[], int n) {
+		// Write your code here.
+		//memoization approach 
+		//time com.=O(n*n)
+		//space com.=O(n*n)+O(target)
+		int dp[][]=new int[n][n+1];
+		for(int i=0;i<n;i++){
+			for(int j=0;j<=n;j++)
+			dp[i][j]=-1;
+		}
+		return f(n-1,n,price,dp);
+	}
+}
+//tabulation to remove extra stack space in memoization
+public class Solution {
+	public static int cutRod(int price[], int n) {
+		// Write your code here.
+		// tabulation approach 
+		//time com.=O(n*n)
+		//space com.=O(n*n)
+		int dp[][]=new int[n][n+1];
+		for(int i=0;i<=n;i++){
+			dp[0][i]=i*price[0];
+		}
+		for(int i=1;i<n;i++){
+			for(int len=0;len<=n;len++){
+				int nottake=0+dp[i-1][len];
+				int take=Integer.MIN_VALUE;
+				int rodlen=i+1;
+				if(rodlen<=len){
+				take=price[i]+dp[i][len-rodlen];
+				//index does not change as
+				//we can repetatively take as much as possible
+				}
+
+				dp[i][len]=Math.max(take,nottake);
+			}
+
+		}
+		return dp[n-1][n];
+	}
+}
+//space optimization of tabulation
+
+public class Solution {
+	public static int cutRod(int price[], int n) {
+		// Write your code here.
+		//optimization of tabulation approach 
+		//time com.=O(n*n)
+		//space com.=O(2*n)
+		int prev[]=new int[n+1];
+		for(int i=0;i<=n;i++){
+			prev[i]=i*price[0];
+		}
+		for(int i=1;i<n;i++){
+			int cur[]=new int[n+1];
+			for(int len=0;len<=n;len++){
+				int nottake=0+prev[len];
+				int take=Integer.MIN_VALUE;
+				int rodlen=i+1;
+				if(rodlen<=len){
+				take=price[i]+cur[len-rodlen];
+				//index does not change as
+				//we can repetatively take as much as possible
+				}
+
+				cur[len]=Math.max(take,nottake);
+			}
+			prev=cur;
+
+		}
+		return prev[n];
+	}
+}
