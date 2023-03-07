@@ -1,0 +1,128 @@
+
+//leetcode : 516. Longest Palindromic Subsequence
+
+
+package dpseries;
+import java.util.*;
+public class lec28longestPalindromicSubsequence {
+
+	public static void main(String[] args) {
+		String s="bbbab";
+		System.out.println(longestPalindromeSubseq(s));
+		System.out.println(longestPalindromeSubsequence(s));
+		
+		 String t= "bbabcbcab";
+         
+		  System.out.print("The Length of Longest Palindromic Subsequence is ");
+		  System.out.println(longestPalindromeSubsequence(t));
+
+	}
+	//brute force using recursion
+public static int longestPalindromeSubseq(String s) {
+	//find all sub string and check the largest palindromic sub string
+	Set<String> set=new HashSet<>();
+	int n=s.length();
+	findSS(s,set,"");
+	int ans=0;
+	for(String str:set) {
+		if(isPalindrome(str))
+			ans=Math.max(ans, str.length());
+	}
+        return ans;
+    }
+private static boolean isPalindrome(String str) {
+		int l=0;
+		int r=str.length()-1;
+		while(l<=r) {
+			if(str.charAt(l)!=str.charAt(r))
+				return false;
+			l++;
+			r--;
+		}
+		return true;
+	}
+static void findSS(String s,Set<String> res,String cur) {
+	if (s.length() == 0) {
+        res.add(cur);
+        return;
+    }
+
+    // We add adding 1st character in string
+	findSS(s.substring(1), res,cur + s.charAt(0));
+
+ // Not adding first character of the string because the concept of subsequence either
+    // character will present or not
+	findSS(s.substring(1),res, cur);
+}
+
+
+//tabulation
+
+static int longestPalindromeSubsequence(String s){
+	//Time Complexity: O(N*N)
+    //Space Complexity: O(N*N)
+    String t = s;
+    String ss=new StringBuilder(s).reverse().toString();
+    
+    //dp - 25 
+    return lcs(ss,t);
+}
+static int lcs(String s1, String s2) {
+    
+    int n=s1.length();
+    int m=s2.length();
+
+    int dp[][]=new int[n+1][m+1];
+    for(int rows[]:dp)
+    Arrays.fill(rows,-1);
+    for(int i=0;i<=n;i++){
+        dp[i][0] = 0;
+    }
+    for(int i=0;i<=m;i++){
+        dp[0][i] = 0;
+    }
+    
+    for(int ind1=1;ind1<=n;ind1++){
+        for(int ind2=1;ind2<=m;ind2++){
+            if(s1.charAt(ind1-1)==s2.charAt(ind2-1))
+                dp[ind1][ind2] = 1 + dp[ind1-1][ind2-1];
+            else
+                dp[ind1][ind2] = 0 + Math.max(dp[ind1-1][ind2],dp[ind1][ind2-1]);
+        }
+    }
+    
+    return dp[n][m];
+}
+
+//space optimization of tabulation
+static int lcsopt(String s1, String s2) {
+    
+    int n=s1.length();
+    int m=s2.length();
+
+    int prev[]=new int[m+1];
+    
+    
+    // Base Case is covered as we have initialized the prev and cur to 0.
+    
+    for(int ind1=1;ind1<=n;ind1++){
+    	int cur[]=new int[m+1];
+        for(int ind2=1;ind2<=m;ind2++){
+            if(s1.charAt(ind1-1)==s2.charAt(ind2-1))
+                cur[ind2] = 1 + prev[ind2-1];
+            else
+                cur[ind2] = 0 + Math.max(prev[ind2],cur[ind2-1]);
+        }
+        prev= cur;
+    }
+    
+    return prev[m];
+}
+
+static int longestPalindromeSubsequenceopt(String s){
+    String t = s;
+    String ss=new StringBuilder(s).reverse().toString();
+    return lcsopt(ss,t);
+}
+
+}
