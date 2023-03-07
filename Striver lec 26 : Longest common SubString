@@ -1,0 +1,154 @@
+package dpseries;
+import java.util.*;
+public class lec26largestCommonSubString {
+
+	public static void main(String[] args) {
+		String s="abcde";
+		String t="azcsef";
+		tab(s,t);
+		System.out.println(lcs(s,t));
+
+	}
+	
+	//brute force approach using recursion
+	static String lcs(String s,String t) {
+		return find(s.length()-1,t.length()-1,s,t,"");
+	}
+	static String find(int n,int m,String s,String t,String cur) {
+		if(n<0 || m<0) {
+			return cur;
+		}
+		if(s.charAt(n)==t.charAt(m)) {
+			cur=s.charAt(n)+cur;
+			find(n-1,m-1,s,t,cur);
+		}
+		
+		String r_take="";
+		r_take=find(n,m-1,s,t,cur);
+		String c_take="";
+		c_take=find(n-1,m,s,t,cur);
+		return r_take.length()>c_take.length()?r_take:c_take;
+	}
+	static void tab(String s,String t) {
+		//optimized approach
+		int n=s.length();
+		int m=t.length();
+		int dp[][]=new int[n+1][m+1];
+		//base case
+		for(int j=0;j<=m;j++) {
+			dp[0][j]=0;//first row
+		}
+		for(int i=0;i<=n;i++) {
+			dp[i][0]=0;//first column
+		}
+		
+		for(int i=1;i<=n;i++) {
+			for(int j=1;j<=m;j++) {
+				if(s.charAt(i-1)==t.charAt(j-1))
+					dp[i][j]=1+dp[i-1][j-1];
+				else
+					dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1]);
+			}
+		}
+		int len= dp[n][m];
+		char []ans=new char[len];
+		for(int i=0;i<len;i++) {
+			ans[i]='*';
+		}
+		int index=len-1;
+		int i=n;int j=m;
+		while(i>0 && j>0) {
+			//if same character
+			if(s.charAt(i-1)==t.charAt(j-1)) {
+				ans[index--]=s.charAt(i-1);
+				i--;
+				j--;
+			}else {
+				if(dp[i-1][j]>dp[i][j-1]) {
+			//jaha se maximum value araha hai ustaraf move karna hai
+					i--;
+				}else
+					j--;
+			}
+		}
+		System.out.println(ans);
+	}
+
+}
+package dpseries;
+import java.util.*;
+public class lec26largestCommonSubString {
+
+	public static void main(String[] args) {
+		String s="abcde";
+		String t="azcsef";
+		tab(s,t);
+		System.out.println(lcs(s,t));
+
+	}
+	
+	//brute force approach using recursion
+	static String lcs(String s,String t) {
+		return find(s.length()-1,t.length()-1,s,t,"");
+	}
+	static String find(int n,int m,String s,String t,String cur) {
+		if(n<0 || m<0) {
+			return cur;
+		}
+		if(s.charAt(n)==t.charAt(m)) {
+			cur=s.charAt(n)+cur;
+			find(n-1,m-1,s,t,cur);
+		}
+		
+		String r_take="";
+		r_take=find(n,m-1,s,t,cur);
+		String c_take="";
+		c_take=find(n-1,m,s,t,cur);
+		return r_take.length()>c_take.length()?r_take:c_take;
+	}
+	static void tab(String s,String t) {
+		//optimized approach
+		int n=s.length();
+		int m=t.length();
+		int dp[][]=new int[n+1][m+1];
+		//base case
+		for(int j=0;j<=m;j++) {
+			dp[0][j]=0;//first row
+		}
+		for(int i=0;i<=n;i++) {
+			dp[i][0]=0;//first column
+		}
+		
+		for(int i=1;i<=n;i++) {
+			for(int j=1;j<=m;j++) {
+				if(s.charAt(i-1)==t.charAt(j-1))
+					dp[i][j]=1+dp[i-1][j-1];
+				else
+					dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1]);
+			}
+		}
+		int len= dp[n][m];
+		char []ans=new char[len];
+		for(int i=0;i<len;i++) {
+			ans[i]='*';
+		}
+		int index=len-1;
+		int i=n;int j=m;
+		while(i>0 && j>0) {
+			//if same character
+			if(s.charAt(i-1)==t.charAt(j-1)) {
+				ans[index--]=s.charAt(i-1);
+				i--;
+				j--;
+			}else {
+				if(dp[i-1][j]>dp[i][j-1]) {
+			//jaha se maximum value araha hai ustaraf move karna hai
+					i--;
+				}else
+					j--;
+			}
+		}
+		System.out.println(ans);
+	}
+
+}
