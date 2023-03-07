@@ -1,0 +1,155 @@
+package dpseries;
+import java.util.*;
+public class lec25LongestCommonSubsequencelength {
+
+	public static void main(String[] args) {
+		String s="abdck";
+		String t="zbadfc";
+		System.out.println("Length of lcs is "+lcs(s,t));
+		System.out.println("Length of lcs is "+lcs1(s,t));
+		System.out.println("Length of lcs is "+memo(s,t));
+		System.out.println("Length of lcs is "+tab(s,t));
+		System.out.println("Length of lcs is "+spaceopttab(s,t));
+
+	}
+	
+	//fifth approach
+		static int spaceopttab(String s,String t) {
+			int n=s.length();
+			int m=t.length();
+			int prev[]=new int[m+1];
+			//base case
+			for(int j=0;j<=m;j++) {
+				prev[j]=0;//first row
+			}
+			
+			for(int i=1;i<=n;i++) {
+				int cur[]=new int[m+1];
+				for(int j=1;j<=m;j++) {
+					if(s.charAt(i-1)==t.charAt(j-1))
+						cur[j]=1+prev[j-1];
+					else
+						cur[j]=Math.max(prev[j], cur[j-1]);
+				}
+				prev=cur;
+			}
+			return prev[m];
+		}
+	
+	//fourth approach
+	static int tab(String s,String t) {
+		int n=s.length();
+		int m=t.length();
+		int dp[][]=new int[n+1][m+1];
+		//base case
+		for(int j=0;j<=m;j++) {
+			dp[0][j]=0;//first row
+		}
+		for(int i=0;i<=n;i++) {
+			dp[i][0]=0;//first column
+		}
+		
+		for(int i=1;i<=n;i++) {
+			for(int j=1;j<=m;j++) {
+				if(s.charAt(i-1)==t.charAt(j-1))
+					dp[i][j]=1+dp[i-1][j-1];
+				else
+					dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1]);
+			}
+		}
+		return dp[n][m];
+	}
+	//third approach memoization
+	static int memo(String s,String t) {
+		//find max length along recursion to avoid space
+		//time complexity :O(2^n)
+		//space complexity :O(1)
+		int n=s.length();
+		int m=t.length();
+		int dp[][]=new int[n][m];
+		for(int i=0;i<n;i++) {
+			Arrays.fill(dp[i],-1);
+		}
+		return memoization(n-1,m-1,s,t,dp);
+	}
+	static int memoization(int ind1,int ind2,String s,String t,int dp[][]) {
+		if(ind1<0 || ind2<0)//one string among two becomes empty
+			return 0;
+		if(dp[ind1][ind2]!=-1)
+			return dp[ind1][ind2];
+		
+		if(s.charAt(ind1)==t.charAt(ind2))//last character equal
+		{
+			return dp[ind1][ind2]=1+memoization(ind1-1,ind2-1,s,t,dp);
+		}
+		
+		return dp[ind1][ind2]=Math.max(memoization(ind1,ind2-1,s,t,dp), memoization(ind1-1,ind2,s,t,dp));
+	}
+	
+	//second approach
+	static int lcs1(String s,String t) {
+		//find max length along recursion to avoid space
+		//time complexity :O(2^n)
+		//space complexity :O(1)
+		int n=s.length();
+		int m=t.length();
+		return f1(n-1,m-1,s,t);
+	}
+	static int f1(int ind1,int ind2,String s,String t) {
+		if(ind1<0 || ind2<0)//one string among two becomes empty
+			return 0;
+		
+		if(s.charAt(ind1)==t.charAt(ind2))//last character equal
+		{
+			return 1+f1(ind1-1,ind2-1,s,t);
+		}
+		
+		return Math.max(f1(ind1,ind2-1,s,t), f1(ind1-1,ind2,s,t));
+	}
+	
+	//first approach
+	static int lcs(String s,String t) {
+		int n=s.length();
+		int m=t.length();
+		return f(n-1,m-1,s,t);
+	}
+	static int f(int ind1,int ind2,String s,String t) {
+		//brute force generate all subsequence and compare to find answer
+		//time complexity :O(2^n)*O(2^m)
+		//space complexity = O(2^n)+O(2^m)
+		Set<String>first=new HashSet<>();
+		Set<String>second=new HashSet<>();
+		generate(s,first,"");
+		generate(t,second,"");
+		for(String x:first) {
+			System.out.println(x);
+		}
+		System.out.println("Another string subsequence :");
+		for(String x:second) {
+			System.out.println(x);
+		}
+		int max_len=0;
+		for(String str:first) {
+			if(second.contains(str))
+				max_len=Math.max(max_len, str.length());
+		}
+		
+		return max_len;
+	}
+	private static void generate(String s, Set<String> res,String cur) {
+		if (s.length() == 0) {
+            res.add(cur);
+            return;
+        }
+ 
+        // We add adding 1st character in string
+		generate(s.substring(1), res,cur + s.charAt(0));
+ 
+        // Not adding first character of the string
+        // because the concept of subsequence either
+        // character will present or not
+		generate(s.substring(1),res, cur);
+		
+	}
+
+}
