@@ -1,0 +1,123 @@
+//here we can observe that if we find the longest pallindromic subsequence of given string 
+//and minus the palindromic length from original string length it gives ans .
+// Ex :- s= "codingninjas"   pal=: "ingni" now we reverse "cod" and add to last of s and 
+//similarly take "njas" and reverse and append from first after "cod" it give
+  "codsajningninjasdoc"  which is a palindrome
+
+
+so now the que. converts to find the longest palindromic subsequence  dp-27
+
+//recursive approach (Brute force)
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int minInsertion(String s) {
+    	// Brute force : time complexity : O(2^n)  space :O(n!)   gives tle
+		Set<String> ss=new HashSet<>();
+        int n=s.length();
+		findAllSS(s,"",ss);
+		int ans=0;
+		for(String str:ss) {
+			if(isPalindrome(str))
+				ans=Math.max(ans, str.length());
+		}
+	    return n-ans;
+    }
+    private static boolean isPalindrome(String str) {
+		int l=0;
+		int r=str.length()-1;
+		while(l<=r) {
+			if(str.charAt(l)!=str.charAt(r))
+				return false;
+			l++;
+			r--;
+		}
+		return true;
+	}
+
+	private static void findAllSS(String s,String cur, Set<String> res) {
+		if (s.length() == 0) {
+	        res.add(cur);
+	        return;
+	    }
+
+	    // We add adding 1st character in string
+		findAllSS(s.substring(1),cur + s.charAt(0),res);
+
+	 // Not adding first character of the string because the concept of subsequence either
+	    // character will present or not
+		findAllSS(s.substring(1), cur,res);
+		
+	}
+}
+
+//tabulation 
+
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int minInsertion(String s) {
+    	//time complexity :O(n*n)  = space complexity
+		String rev=new StringBuilder(s).reverse().toString();
+		
+		return s.length()-MakelpstTable(s,rev);
+    }
+    private static int MakelpstTable(String s, String rev) {
+		int n=s.length();
+		//int m=rev.length();  as length of rev = length of s
+		int dp[][]=new int[n+1][n+1];
+		//first row and column always 0
+		for(int i=0;i<=n;i++) {
+			Arrays.fill(dp[i], -1);
+		}
+		
+		for(int i=0;i<=n;i++)//column
+			dp[i][0]=0;
+		for(int i=0;i<=n;i++)//row
+			dp[0][i]=0;
+		
+		for(int i=1;i<=n;i++) {
+			for(int j=1;j<=n;j++) {
+				if(s.charAt(i-1)==rev.charAt(j-1)) 
+					dp[i][j] = 1 + dp[i-1][j-1];
+		         else
+		            dp[i][j] = 0 + Math.max(dp[i-1][j],dp[i][j-1]);
+			}
+		}
+		
+		return dp[n][n];
+	}
+}
+//optimization of tabulation
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int minInsertion(String s) {
+    	//time complexity :O(n*n)   space complexity = O(2*n) linear time
+		String rev=new StringBuilder(s).reverse().toString();
+				
+		return s.length()-MakelpstTableOptimised(s,rev);
+    }
+    private static int MakelpstTableOptimised(String s, String rev) {
+		int n=s.length();
+	
+		int prev[]=new int[n+1];
+		
+		
+		for(int i=0;i<=n;i++)//row
+			prev[i]=0;
+		
+		for(int i=1;i<=n;i++) {
+			int cur[]=new int[n+1];
+			for(int j=1;j<=n;j++) {
+				if(s.charAt(i-1)==rev.charAt(j-1)) 
+					cur[j] = 1 + prev[j-1];
+		         else
+		        	 cur[j] = 0 + Math.max(prev[j],cur[j-1]);
+			}
+			prev=cur;
+		}
+		
+		return prev[n];
+	}
+}
