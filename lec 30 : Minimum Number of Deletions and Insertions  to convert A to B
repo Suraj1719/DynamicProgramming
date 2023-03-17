@@ -1,0 +1,47 @@
+Simple observation is if we find the common longest substring of two given string , We do not have to use any operation on them . After that rest charecter 
+(some aree delete and some are insert).
+
+so minimum operation =n+m-2*length of lcs
+
+find longest common sub sequence : dp - 28
+
+//code  tabulation for other approach seee dp-28
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+    public static int canYouMake(String str, String ptr) {
+        // Write your code here.
+        int n=str.length();
+        int m=ptr.length();
+        int len_lcs=longestCommonSubSequence(str,ptr);
+
+        return n+m-2*len_lcs;
+    }
+    private static int longestCommonSubSequence(String s, String p) {
+		int n=s.length();
+
+		int m=p.length();
+		int dp[][]=new int[n+1][m+1];
+		//first row and column always 0
+		for(int i=0;i<=n;i++) {
+			Arrays.fill(dp[i], -1);
+		}
+		
+		for(int i=0;i<=n;i++)//column
+			dp[i][0]=0;
+		for(int i=0;i<=m;i++)//row
+			dp[0][i]=0;
+		
+		for(int i=1;i<=n;i++) {
+			for(int j=1;j<=m;j++) {
+				if(s.charAt(i-1)==p.charAt(j-1)) 
+					dp[i][j] = 1 + dp[i-1][j-1];
+		         else
+		            dp[i][j] = 0 + Math.max(dp[i-1][j],dp[i][j-1]);
+			}
+		}
+		
+		return dp[n][m];
+	}
+
+}
