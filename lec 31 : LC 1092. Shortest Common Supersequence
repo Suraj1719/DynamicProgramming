@@ -1,0 +1,61 @@
+I f we have to return the length of string , then we can do it by couple of ways .
+n : leength of first string
+m : length of second string
+//one way : Brute force  (recursion)  to find thee longest common subsequence , then return n+m-len(lcs)
+
+//seecond tabulation to find lcs  : In it we can return both length and string
+
+//optimization of tabulation : here we acn return only length
+
+
+//As question asked to return String so here is the tabulation approach
+
+//code
+
+class Solution {
+    //as here we have to return String , we have to make dp table
+    public String shortestCommonSupersequence(String str1, String str2) {
+
+        //time  :O(n*m)  space =O(n*m)
+        int n=str1.length();
+        int m=str2.length();
+        int dp[][]=new int[n+1][m+1];
+        //first row and column are zero
+        //longest common subsequence table
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(str1.charAt(i-1)==str2.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }else
+                dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+            }
+        }
+
+        //if we have to return length as ans
+        //return n+m-dp[n][m];  but we have to return string
+        StringBuilder ans=new StringBuilder();
+        int i=n;int j=m;
+        while(i>0 && j>0){
+            if(str1.charAt(i-1)==str2.charAt(j-1)){
+                ans.append(str1.charAt(i-1));
+                i--;
+                j--;
+            }else if(dp[i-1][j]>dp[i][j-1]){//we have to make up move
+                ans.append(str1.charAt(i-1));
+                i--;
+            }else{//left move
+                ans.append(str2.charAt(j-1));
+                j--;
+            }
+        }
+        while(i>0){
+            ans.append(str1.charAt(i-1));
+            i--;
+        }
+        while(j>0){
+            ans.append(str2.charAt(j-1));
+            j--;
+        }
+        return ans.reverse().toString();
+    }
+}
