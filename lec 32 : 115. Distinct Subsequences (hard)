@@ -1,0 +1,186 @@
+See yt of striver(take you forward) or see dp  sheet
+
+approach-1
+class Solution {
+    String str1="";
+    String str2="";
+    public int numDistinct(String s, String t) {
+        str1=s;
+        str2=t;
+        int n=s.length();
+        int m=t.length();
+        //Brute force approach :We want to explore all possible way and find sub string
+        //Time complexity :O(2^n)*O(2^m)    space complexity :O(n+m) stack space
+        //give tle
+        return f(n-1,m-1);
+    }
+    int f(int i,int j){
+        //base case
+        if(j<0) return 1;//we have found all characters of str2
+
+        if(i<0) return 0;//str1 is empty where we need some remaining character of str2
+
+        if(str1.charAt(i)==str2.charAt(j))
+        //case 1: delete matched character from both and further surch for rem. of str2
+        //case 2: we can still search str2 in deleted last characer og str1
+        return f(i-1,j-1)+f(i-1,j);//same character then two cases
+
+        else
+
+        return f(i-1,j);//character not match we eleminate last character of str1
+    }
+}
+//approach-2
+class Solution {
+    String str1="";
+    String str2="";
+    public int numDistinct(String s, String t) {
+        str1=s;
+        str2=t;
+        int n=s.length();
+        int m=t.length();
+        int dp[][]=new int[n][m];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        //optimization of overlapping problem using memoization
+        //Time complexity :O(n*m)    space complexity :O(n*m)+O(n+m) stack space
+        return f(n-1,m-1,dp);
+    }
+    int f(int i,int j,int dp[][]){
+        //base case
+        if(j<0) return 1;//we have found all characters of str2
+
+        if(i<0) return 0;//str1 is empty where we need some remaining character of str2
+         if(dp[i][j]!=-1)
+         return dp[i][j];
+        if(str1.charAt(i)==str2.charAt(j))
+        //case 1: delete matched character from both and further surch for rem. of str2
+        //case 2: we can still search str2 in deleted last characer og str1
+        return dp[i][j]=f(i-1,j-1,dp)+f(i-1,j,dp);//same character then two cases
+
+        else
+
+        return dp[i][j]=f(i-1,j,dp);//character not match we eleminate last character of str1
+    }
+}
+//approach-3
+class Solution {
+    String str1="";
+    String str2="";
+    public int numDistinct(String s, String t) {
+        //1 based indexing which is going to used for tabulation
+        str1=s;
+        str2=t;
+        int n=s.length();
+        int m=t.length();
+        int dp[][]=new int[n+1][m+1];
+        for(int i=0;i<=n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        //optimization of overlapping problem using memoization
+        //Time complexity :O(n*m)    space complexity :O(n*m)+O(n+m) stack space
+        return f(n,m,dp);
+    }
+    int f(int i,int j,int dp[][]){
+        //base case
+        if(j==0) return 1;//we have found all characters of str2
+
+        if(i==0) return 0;//str1 is empty where we need some remaining character of str2
+         if(dp[i][j]!=-1)
+         return dp[i][j];
+        if(str1.charAt(i-1)==str2.charAt(j-1))
+        //case 1: delete matched character from both and further surch for rem. of str2
+        //case 2: we can still search str2 in deleted last characer og str1
+        return dp[i][j]=f(i-1,j-1,dp)+f(i-1,j,dp);//same character then two cases
+
+        else
+
+        return dp[i][j]=f(i-1,j,dp);//character not match we eleminate last character of str1
+    }
+}
+//approach-4
+class Solution {
+    public int numDistinct(String s, String t) {
+        int n=s.length();
+        int m=t.length();
+        int dp[][]=new int[n+1][m+1];
+        for(int i=0;i<=n;i++){
+           Arrays.fill(dp[i],0);
+        }
+        //base case
+        //case 1 : if j==0  return 1
+        for(int i=0;i<=n;i++){
+            dp[i][0]=1;
+        }
+        //case 2 : if i==0  return 0
+        for(int j=1;j<=m;j++){
+            dp[0][j]=0;
+        }
+
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(s.charAt(i-1)==t.charAt(j-1)){
+                dp[i][j]=dp[i-1][j-1]+dp[i-1][j];
+                }
+                else{
+                dp[i][j]=dp[i-1][j];
+                }
+            }
+        }
+        
+    return dp[n][m];
+    }
+}
+//approach-5
+class Solution {
+    public int numDistinct(String s, String t) {
+        //space optimization of tabulation
+        //time com.:O(n*m)  space :O(2*m)
+        int n=s.length();
+        int m=t.length();
+        int prev[]=new int[m+1];
+        
+        //base case
+        prev[0]=1;
+
+        for(int i=1;i<=n;i++){
+            int cur[]=new int[m+1];
+            cur[0]=1;
+            for(int j=1;j<=m;j++){
+                if(s.charAt(i-1)==t.charAt(j-1)){
+                cur[j]=prev[j-1]+prev[j];
+                }
+                else{
+                cur[j]=prev[j];
+                }
+            }
+            prev=cur;
+        }
+        
+    return prev[m];
+    }
+}
+//approach-6
+class Solution {
+    public int numDistinct(String s, String t) {
+        //further space optimization of tabulation into one array
+        //time com.:O(n*m)  space :O(m)
+        int n=s.length();
+        int m=t.length();
+        int dp[]=new int[m+1];
+        
+        //base case
+        dp[0]=1;
+
+        for(int i=1;i<=n;i++){
+            for(int j=m;j>=1;j--){
+                if(s.charAt(i-1)==t.charAt(j-1)){
+                dp[j]=dp[j-1]+dp[j];
+                }
+            }
+        }
+        
+    return dp[m];
+    }
+}
