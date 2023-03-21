@@ -1,0 +1,112 @@
+//LC 44. Wildcard Matching(HARD)
+
+//APPROACH - 1(RECURSION) (BRUTE FORCE)
+class Solution {
+    public boolean isMatch(String s, String p) {
+        //Brute force : recursion
+        //see yt of striver or dp sheet
+        //time : exponential   space :O(n+m) stack space   gives tle
+        int n=s.length();
+        int m=p.length();
+        return f(n-1,m-1,s,p);
+    }
+    boolean f(int i,int j,String s,String p){
+        //base case
+        if(i<0 && j<0) return true;
+        if(j<0 && i>=0) return false;
+        if(i<0 && j>=0){
+            for(int k=0;k<=j;k++){
+                if(p.charAt(k)!='*')
+                return false;
+            }
+            return true;
+        }
+
+        if(s.charAt(i)==p.charAt(j) || p.charAt(j)=='?')
+        return f(i-1,j-1,s,p);
+
+        if(p.charAt(j)=='*')
+        return f(i-1,j,s,p) || f(i,j-1,s,p);//? as empty and another as a character
+
+        return false;
+    }
+}
+//approach-2 (memoization)
+class Solution {
+    public boolean isMatch(String s, String p) {
+        //memoization
+        //see yt of striver or dp sheet
+        //time : O(n*m)   space :O(n*m)+O(n+m) stack space  
+        int n=s.length();
+        int m=p.length();
+        boolean dp[][]=new boolean[n][m];
+        boolean vis[][]=new boolean[n][m];
+        return f(n-1,m-1,s,p,dp,vis);
+    }
+    boolean f(int i,int j,String s,String p,boolean dp[][],boolean vis[][]){
+        //base case
+        if(i<0 && j<0) return true;
+        if(j<0 && i>=0) return false;
+        if(i<0 && j>=0){
+            for(int k=0;k<=j;k++){
+                if(p.charAt(k)!='*')
+                return false;
+            }
+            return true;
+        }
+        if(vis[i][j])
+        return dp[i][j];
+
+        if(s.charAt(i)==p.charAt(j) || p.charAt(j)=='?'){
+            vis[i][j]=true;
+        return dp[i][j]=f(i-1,j-1,s,p,dp,vis);
+        }
+
+        if(p.charAt(j)=='*'){
+               vis[i][j]=true;
+        return dp[i][j]=f(i-1,j,s,p,dp,vis) || f(i,j-1,s,p,dp,vis);//? as empty and another as a character
+        }
+        vis[i][j]=true;
+        return dp[i][j]=false;
+    }
+}
+//approach-3 (tabulation)
+class Solution {
+    public boolean isMatch(String s, String p) {
+        //memoization
+        //see yt of striver or dp sheet
+        //time : O(n*m)   space :O(n*m)+O(n+m) stack space  
+
+        //note : for tabulation wee have to make 1 based indexing
+        int n=s.length();
+        int m=p.length();
+        boolean dp[][]=new boolean[n+1][m+1];
+        dp[0][0]=true;
+        for(int i=1;i<=n;i++){
+            dp[i][0]=false;
+        }
+
+        for(int j=1;j<=m;j++){
+            boolean flag=true;
+            for(int i=0;i<j;i++){
+                if(p.charAt(i)!='*'){
+                    flag=false;
+                    break;
+                }
+            }
+            dp[0][j]=flag;
+        }
+
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(s.charAt(i-1)==p.charAt(j-1) || p.charAt(j-1)=='?')
+                dp[i][j]=dp[i-1][j-1];
+                else if(p.charAt(j-1)=='*')
+                dp[i][j]=dp[i-1][j]|dp[i][j-1];
+                else
+                dp[i][j]=false;
+            }
+        }
+        return dp[n][m];
+    }
+}
