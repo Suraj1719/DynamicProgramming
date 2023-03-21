@@ -1,0 +1,97 @@
+//LC 123. Best Time to Buy and Sell Stock III   HARD
+
+//brute force (recursion)
+class Solution {
+    public int maxProfit(int[] prices) {
+        //Brute force : recursion
+        //time complexity : exponential  space com. : O(n) stack space
+        int n=prices.length;
+        return f(0,1,2,prices,n);
+    }
+    int f(int ind,int buy,int k,int p[],int n){
+        if(ind==n || k==0) return 0;
+
+        if(buy==1){//buy  buy cur or in future
+            return Math.max(-p[ind]+f(ind+1,0,k,p,n), 0+f(ind+1,1,k,p,n));
+        }
+        //sell : present day or future
+        return Math.max(p[ind]+f(ind+1,1,k-1,p,n), 0+f(ind+1,0,k,p,n));
+    }
+}
+
+//memoization
+class Solution {
+    public int maxProfit(int[] prices) {
+        //memoization
+        //time complexity : O(n*2*3)  space com. : O(n*2*3)+O(n) stack space
+        int n=prices.length;
+        int dp[][][]=new int[n][2][3];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<2;j++){
+                Arrays.fill(dp[i][j],-1);
+            }
+        }
+        return f(0,1,2,prices,n,dp);
+    }
+    int f(int ind,int buy,int k,int p[],int n,int dp[][][]){
+        if(ind==n || k==0) return 0;
+        if(dp[ind][buy][k]!=-1)
+        return dp[ind][buy][k];
+
+        if(buy==1){//buy  buy cur or in future
+    return dp[ind][buy][k]= Math.max(-p[ind]+f(ind+1,0,k,p,n,dp), 0+f(ind+1,1,k,p,n,dp));
+        }
+        //sell : present day or future
+        return dp[ind][buy][k]=Math.max(p[ind]+f(ind+1,1,k-1,p,n,dp), 0+f(ind+1,0,k,p,n,dp));
+    }
+}
+//tabulation
+class Solution {
+    public int maxProfit(int[] p) {
+        //tabulation
+        //time complexity : O(n*2*3)  space com. : O(n*2*3)
+        int n=p.length;
+        int dp[][][]=new int[n+1][2][3];
+        //since base cases are return 0 so here i do not write as dp array initialize with 0
+
+        for(int ind=n-1;ind>=0;ind--){
+            for(int buy=0;buy<=1;buy++){
+                for(int k=1;k<=2;k++){// for 0 it covered in base case
+    if(buy==1){//buy  buy cur or in future
+     dp[ind][buy][k]= Math.max(-p[ind]+dp[ind+1][0][k], 0+dp[ind+1][1][k]);
+        }
+        else
+        //sell : present day or future
+     dp[ind][buy][k]=Math.max(p[ind]+dp[ind+1][1][k-1], 0+dp[ind+1][0][k]);
+                }
+            }
+        }
+        return dp[0][1][2];
+    }
+}
+//optimization of tabulation
+class Solution {
+    public int maxProfit(int[] p) {
+        //space optimization of tabulation
+        //time complexity : O(n*2*3)  space com. : O(2*3)
+        int n=p.length;
+        int after[][]=new int[2][3];
+        //since base cases are return 0 so here i do not write as dp array initialize with 0
+
+        for(int ind=n-1;ind>=0;ind--){
+            int cur[][]=new int[2][3];
+            for(int buy=0;buy<=1;buy++){
+                for(int k=1;k<=2;k++){// for 0 it covered in base case
+    if(buy==1){//buy  buy cur or in future
+     cur[buy][k]= Math.max(-p[ind]+after[0][k], 0+after[1][k]);
+        }
+        else
+        //sell : present day or future
+     cur[buy][k]=Math.max(p[ind]+after[1][k-1], 0+after[0][k]);
+                }
+            }
+            after=cur;
+        }
+        return after[1][2];
+    }
+}
