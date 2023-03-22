@@ -1,0 +1,119 @@
+LC 300. Longest Increasing Subsequence
+
+//CODE :
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        //brute force : recursion
+        //time : O(2^n)  space :O(n) stack space
+        int n=nums.length;
+        return f(0,-1,nums,n);
+    }
+    int f(int ind,int prev_ind,int a[],int n){
+        if(ind==n) return 0;
+        //not pick
+        int len=0 + f(ind+1,prev_ind,a,n);
+
+        if(prev_ind==-1 || a[ind]>a[prev_ind]){
+            len=Math.max(len,1+f(ind+1,ind,a,n));
+        }
+        return len;
+    }
+}
+
+//approach - 2
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        //memoization
+        //time : O(n*n)  space :O(n*n)+O(n) stack space
+
+        int n=nums.length;
+        int dp[][]=new int[n][n+1];//shift 1 index
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        return f(0,-1,nums,n,dp);
+    }
+    int f(int ind,int prev_ind,int a[],int n,int dp[][]){
+        if(ind==n) return 0;
+        //not pick
+        if(dp[ind][prev_ind+1]!=-1)
+        return dp[ind][prev_ind+1];
+        int len=0 + f(ind+1,prev_ind,a,n,dp);
+
+        if(prev_ind==-1 || a[ind]>a[prev_ind]){
+            len=Math.max(len,1+f(ind+1,ind,a,n,dp));
+        }
+        return dp[ind][prev_ind+1]=len;
+    }
+}
+//approach -3
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        //tabulation
+        //time : O(n*n)  space :O(n*n)
+
+        int n=nums.length;
+        int dp[][]=new int[n+1][n+1];//shift 1 index
+        for(int ind=n-1;ind>=0;ind--){
+            for(int prev_ind=ind-1;prev_ind>=-1;prev_ind--){
+int len=0+dp[ind+1][prev_ind+1];
+if(prev_ind==-1 || nums[ind]>nums[prev_ind]){
+    len=Math.max(len,1+dp[ind+1][ind+1]);
+}
+    dp[ind][prev_ind+1]=len;
+            }
+        }
+        return dp[0][-1+1];
+    }
+}
+//approach-4
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        //optimization of tabulation
+        //time : O(n*n)  space :O(2*n)
+
+        int n=nums.length;
+        int after[]=new int[n+1];//shift 1 index
+        for(int ind=n-1;ind>=0;ind--){
+            int cur[]=new int[n+1];
+            for(int prev_ind=ind-1;prev_ind>=-1;prev_ind--){
+int len=0+after[prev_ind+1];
+if(prev_ind==-1 || nums[ind]>nums[prev_ind]){
+    len=Math.max(len,1+after[ind+1]);
+}
+    cur[prev_ind+1]=len;
+            }
+            after=cur;
+        }
+        return after[-1+1];
+    }
+}
+
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        //optimization of tabulation
+        //time : O(n*n)  space :O(2*n)
+
+        int n=nums.length;
+        int after[]=new int[n+1];//shift 1 index
+        for(int ind=n-1;ind>=0;ind--){
+            int cur[]=new int[n+1];
+            for(int prev_ind=ind-1;prev_ind>=-1;prev_ind--){
+int len=0+after[prev_ind+1];
+if(prev_ind==-1 || nums[ind]>nums[prev_ind]){
+    len=Math.max(len,1+after[ind+1]);
+}
+    cur[prev_ind+1]=len;
+            }
+            after=cur;
+        }
+        return after[-1+1];
+    }
+}
+
+
+
+////most optimised and whenever we have to return LIS array or list this method is used
+
+see the notes .  We need a hash map to store the previous taken element index .
