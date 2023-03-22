@@ -1,0 +1,96 @@
+LC 714. Best Time to Buy and Sell Stock with Transaction Fee
+
+//CODE :
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        //brute force : recursion
+        //time com. : exponential   space com . :O(n) stack space
+        //gives tle
+        int n=prices.length;
+        return f(0,1,prices,fee,n);
+    }
+    int f(int ind,int buy,int p[],int fee,int n){
+        //base case
+        if(ind==n) return 0;
+        if(buy==1){
+            return Math.max(-p[ind]+f(ind+1,0,p,fee,n),0+f(ind+1,1,p,fee,n));
+        }
+        return Math.max(p[ind]-fee+f(ind+1,1,p,fee,n),0+f(ind+1,0,p,fee,n));
+    }
+}
+//approach - 2 (memoization)
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        //memoization
+        //time com. : O(2*n)   space com . :O(2*n) +O(n) stack space
+        //gives tle
+        int n=prices.length;
+        int dp[][]=new int[n][2];
+        for(int i=0;i<n;i++)
+        Arrays.fill(dp[i],-1);
+        return f(0,1,prices,fee,n,dp);
+    }
+    int f(int ind,int buy,int p[],int fee,int n,int dp[][]){
+        //base case
+        if(ind==n) return 0;
+        if(dp[ind][buy]!=-1)
+        return dp[ind][buy];
+        if(buy==1){
+            return dp[ind][buy]=Math.max(-p[ind]+f(ind+1,0,p,fee,n,dp),0+f(ind+1,1,p,fee,n,dp));
+        }
+        return dp[ind][buy]=Math.max(p[ind]-fee+f(ind+1,1,p,fee,n,dp),0+f(ind+1,0,p,fee,n,dp));
+    }
+}
+
+
+approach - 3
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        //tabulation for removing of extra stack space
+        //time com. : O(2*n)   space com . :O(2*n)
+        int n=prices.length;
+        int dp[][]=new int[n+1][2];
+        for(int ind=n-1;ind>=0;ind--){
+            for(int buy=0;buy<=1;buy++){
+        if(buy==1){//buy
+            dp[ind][buy]=Math.max(-prices[ind]+dp[ind+1][0],0+dp[ind+1][1]);
+        }
+        else//sell
+        dp[ind][buy]=Math.max(prices[ind]-fee+dp[ind+1][1],0+dp[ind+1][0]);            
+            }
+        }
+        return dp[0][1];
+    }
+}
+
+//approach -4 
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        //tabulation for removing of extra stack space
+        //time com. : O(2*n)   space com . :O(2*n)
+        int n=prices.length;
+        int dp[][]=new int[n+1][2];
+        for(int ind=n-1;ind>=0;ind--){
+        dp[ind][1]=Math.max(-prices[ind]+dp[ind+1][0],0+dp[ind+1][1]);
+        dp[ind][0]=Math.max(prices[ind]-fee+dp[ind+1][1],0+dp[ind+1][0]);            
+        }
+        return dp[0][1];
+    }
+}
+
+approach-5
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        //optimization of tabulation 
+        //time com. : O(2*n)   space com . :O(1)
+        int n=prices.length;
+        int after[]=new int[2];
+        for(int ind=n-1;ind>=0;ind--){
+            int cur[]=new int[2];
+        cur[1]=Math.max(-prices[ind]+after[0],0+after[1]);
+        cur[0]=Math.max(prices[ind]-fee+after[1],0+after[0]); 
+        after=cur;           
+        }
+        return after[1];
+    }
+}
