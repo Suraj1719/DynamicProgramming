@@ -1,0 +1,77 @@
+//code
+
+package dpseries;
+import java.util.*;
+public class lec39BestTimetoBuyandSellStockwithCooldown {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int []prices = {1,2,3,0,2};
+		System.out.println(maxProfit(prices));
+		System.out.println(maxProfitMemo(prices));
+		System.out.println(maxProfitTabulation(prices));
+
+	}
+	
+	    public static int maxProfit(int[] prices) {
+	        //brute force : recursion
+	        //time complexity ; exponential  space :O(n) stack space
+	        int n=prices.length;
+	        return f(0,1,n,prices);
+	    }
+	    static int f(int ind,int buy,int n,int p[]){
+	        //base case
+	        if(ind>=n) return 0;
+	        //buy case
+	        if(buy==1){
+	    return Math.max(-p[ind]+f(ind+1,0,n,p),0+f(ind+1,1,n,p));
+	        }
+	        //sell  here only the cooldown period affect
+	        return Math.max(p[ind]+f(ind+2,1,n,p),0+f(ind+1,0,n,p));
+	    }
+	   
+	  public static int maxProfitMemo(int[] prices) {
+	            //memoization as overlapping sub problems are present
+	            //time complexity : O(n*2)  space :O(n*2)+O(n) stack space
+	            int n=prices.length;
+	            int dp[][]=new int[n][2];
+	            for(int i=0;i<n;i++)
+	            Arrays.fill(dp[i],-1);
+	            return f(0,1,n,prices,dp);
+	        }
+	  static int f(int ind,int buy,int n,int p[],int dp[][]){
+	            //base case
+	            if(ind>=n) return 0;
+
+	            if(dp[ind][buy]!=-1)
+	            return dp[ind][buy];
+	            //buy case
+	            if(buy==1){
+	        return dp[ind][buy]=Math.max(-p[ind]+f(ind+1,0,n,p,dp),0+f(ind+1,1,n,p,dp));
+	            }
+	            //sell  here only the cooldown period affect
+	            return dp[ind][buy]=Math.max(p[ind]+f(ind+2,1,n,p,dp),0+f(ind+1,0,n,p,dp));
+	        }
+          
+          
+	public static int maxProfitTabulation(int[] prices) {
+		        //tabulation to remove extra stack space
+		        //time complexity : O(n*2)  space :O(n*2)
+		        int n=prices.length;
+		        int dp[][]=new int[n+2][2];
+
+		        for(int ind=n-1;ind>=0;ind--){
+		            for(int buy=0;buy<=1;buy++){
+		        if(buy==1){
+		    dp[ind][buy]=Math.max(-prices[ind]+dp[ind+1][0],0+dp[ind+1][1]);
+		        }
+		        //sell  here only the cooldown period affect
+		        else
+		        dp[ind][buy]=Math.max(prices[ind]+dp[ind+2][1],0+dp[ind+1][0]);        
+		            }
+		        }
+		        return dp[0][1];
+	}
+		
+
+}
