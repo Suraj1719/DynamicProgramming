@@ -1,0 +1,100 @@
+approach -1 (recursion)
+class Solution {
+    public int maxProfit(int k, int[] prices) {
+        //brute force (recursion)
+        //time complexity : exponential  space com : O(n)  stack space
+        int n=prices.length;
+        return f(0,0,prices,n,k);
+
+    }
+    int f(int ind,int tranNo,int p[],int n,int k){
+        //base case
+        if(ind==n || tranNo==2*k) return 0;
+
+        //buy
+        if(tranNo%2==0){
+            return Math.max(-p[ind]+f(ind+1,tranNo+1,p,n,k), 0+f(ind+1,tranNo,p,n,k));
+        }
+        //sell
+        return Math.max(p[ind]+f(ind+1,tranNo+1,p,n,k), 0+f(ind+1,tranNo,p,n,k));
+    }
+}
+
+approach - 2(memoization)
+class Solution {
+    public int maxProfit(int k, int[] prices) {
+        //memoization as overlapping subproblem present
+        //time complexity : O(n*2k)  space com : O(n*2k) + O(n)  stack space
+        int n=prices.length;
+        int dp[][]=new int[n][2*k];
+        for(int i=0;i<n;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        return f(0,0,prices,n,k,dp);
+
+    }
+    int f(int ind,int tranNo,int p[],int n,int k,int dp[][]){
+        //base case
+        if(ind==n || tranNo==2*k) return 0;
+
+        if(dp[ind][tranNo]!=-1)
+        return dp[ind][tranNo];
+
+        //buy
+        if(tranNo%2==0){
+    return dp[ind][tranNo]=Math.max(-p[ind]+f(ind+1,tranNo+1,p,n,k,dp), 0+f(ind+1,tranNo,p,n,k,dp));
+        }
+        //sell
+    return dp[ind][tranNo]=Math.max(p[ind]+f(ind+1,tranNo+1,p,n,k,dp), 0+f(ind+1,tranNo,p,n,k,dp));
+    }
+}
+
+approach-3 (tabulation)
+class Solution {
+    public int maxProfit(int k, int[] prices) {
+        //tabulation  to remove extra stack space 
+        //time complexity : O(n*2k)  space com : O(n*2k) 
+        int n=prices.length;
+        int dp[][]=new int[n+1][2*k+1];
+//we do not  need to write base case exter nally as base case return 0  and dp initialize 0
+        
+        for(int ind=n-1;ind>=0;ind--){
+            for(int tranNo=(2*k)-1;tranNo>=0;tranNo--){
+    if(tranNo%2==0){
+    dp[ind][tranNo]=Math.max(-prices[ind]+dp[ind+1][tranNo+1], 0+dp[ind+1][tranNo]);
+        }
+        //sell
+        else
+    dp[ind][tranNo]=Math.max(prices[ind]+dp[ind+1][tranNo+1], 0+dp[ind+1][tranNo]);
+            }
+        }
+        return dp[0][0];
+
+    }
+}
+
+approach - 4(space optimization in tabulation)
+class Solution {
+    public int maxProfit(int k, int[] prices) {
+        //optimization of space in  tabulation
+        //time complexity : O(n*2k)  space com : O(2k) ~ O(k)
+        int n=prices.length;
+        int after[]=new int[2*k+1];
+//we do not  need to write base case exter nally as base case return 0  and dp initialize 0
+        
+        for(int ind=n-1;ind>=0;ind--){
+            int cur[]=new int[2*k+1];
+            for(int tranNo=(2*k)-1;tranNo>=0;tranNo--){
+    if(tranNo%2==0){
+    cur[tranNo]=Math.max(-prices[ind]+after[tranNo+1], 0+after[tranNo]);
+        }
+        //sell
+        else
+    cur[tranNo]=Math.max(prices[ind]+after[tranNo+1], 0+after[tranNo]);
+            }
+            after=cur;
+        }
+        return after[0];
+
+    }
+}
