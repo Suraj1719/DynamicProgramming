@@ -1,0 +1,78 @@
+approach -1
+class Solution{
+    static int matrixMultiplication(int N, int arr[])
+    {
+        // Brute force recursion
+        //time com : exponential
+        //space com . : O(n) stack space  gives tle
+        return f(1,N-1,arr);
+    }
+    static int f(int i,int j,int a[]){
+        if(i==j) return 0;//one matrix left
+        
+        //partition to diff. size of matrix
+        int minStep=Integer.MAX_VALUE;
+        for(int k=i;k<j;k++){
+            int step=a[i-1]*a[k]*a[j]+f(i,k,a)+f(k+1,j,a);
+            
+            minStep=Math.min(minStep,step);
+        }
+        return minStep;
+    }
+}
+
+//approach -2 (memoization)
+class Solution{
+    static int matrixMultiplication(int N, int arr[])
+    {
+        // memoization
+        //time com : O(n*n)
+        //space com . : O(n*n)+O(n) stack space  gives tle
+        int dp[][]=new int[N][N];
+        for(int i=0;i<N;i++){
+            Arrays.fill(dp[i],-1);
+        }
+        return f(1,N-1,arr,dp);
+    }
+    static int f(int i,int j,int a[],int dp[][]){
+        if(i==j) return 0;//one matrix left
+        if(dp[i][j]!=-1)
+        return dp[i][j];
+        //partition to diff. size of matrix
+        int minStep=Integer.MAX_VALUE;
+        for(int k=i;k<j;k++){
+            int step=a[i-1]*a[k]*a[j]+f(i,k,a,dp)+f(k+1,j,a,dp);
+            
+            minStep=Math.min(minStep,step);
+        }
+        return dp[i][j]=minStep;
+    }
+}
+
+//approach - 3 tabulation
+class Solution{
+    static int matrixMultiplication(int N, int a[])
+    {
+        // tanulation
+        //time com : O(n*n*n)
+        //space com . : O(n*n)
+        int dp[][]=new int[N][N];
+        for(int i=0;i<N;i++){
+            dp[i][i]=0;//base case
+        }
+        
+        for(int i=N-1;i>=1;i--){
+            for(int j=i+1;j<N;j++){
+                int minStep=Integer.MAX_VALUE;
+                for(int k=i;k<j;k++){
+                    int step=a[i-1]*a[k]*a[j]+dp[i][k]+dp[k+1][j];
+                    
+                    minStep=Math.min(minStep,step);
+                }
+            dp[i][j]=minStep;  
+            }
+            
+        }
+        return dp[1][N-1];
+    }
+}
