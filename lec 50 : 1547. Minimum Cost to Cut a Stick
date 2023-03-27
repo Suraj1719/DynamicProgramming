@@ -1,0 +1,121 @@
+approach - 1
+class Solution {
+    public int minCost(int n, int[] cuts) {
+        int m=cuts.length;
+        int new_cut[]=new int[m+2];
+        new_cut[0]=0; new_cut[m+1]=n;
+        for(int i=0;i<m;i++){
+            new_cut[i+1]=cuts[i];
+        }
+        //brute force  recursion   as we want to solve left and right part 
+        //independently , we have to sort the cuts array so that left side and right side of cur cut position do not dependes on each oters remaining length
+
+        //time comp : exponential   space : O(n) stack space
+        Arrays.sort(new_cut);
+        return f(1,m,new_cut);
+    }
+    int f(int i,int j ,int c[]){
+        if(i>j) return 0;
+
+        int min_cost= 10000000;
+        for(int ind=i;ind<=j;ind++){
+            int cost=c[j+1]-c[i-1]+f(i,ind-1,c)+f(ind+1,j,c);
+            min_cost=Math.min(min_cost,cost);
+        }
+        return min_cost;
+    }
+}
+//approach - 2:
+class Solution {
+    public int minCost(int n, int[] cuts) {
+        int m=cuts.length;
+        int new_cut[]=new int[m+2];
+        new_cut[0]=0; new_cut[m+1]=n;
+        for(int i=0;i<m;i++){
+            new_cut[i+1]=cuts[i];
+        }
+        //memoization on  recursion   
+        int dp[][]=new int[m+1][m+1];
+        for(int i=0;i<m+1;i++){
+            Arrays.fill(dp[i],-1);
+        }
+
+        //time comp : O(m*m)   space : O(m*m)+O(n) stack space
+        Arrays.sort(new_cut);
+        return f(1,m,new_cut,dp);
+    }
+    int f(int i,int j ,int c[],int dp[][]){
+        if(i>j) return 0;
+        if(dp[i][j]!=-1)
+        return dp[i][j];
+
+        int min_cost= 10000000;
+        for(int ind=i;ind<=j;ind++){
+            int cost=c[j+1]-c[i-1]+f(i,ind-1,c,dp)+f(ind+1,j,c,dp);
+            min_cost=Math.min(min_cost,cost);
+        }
+        return dp[i][j]=min_cost;
+    }
+}
+//approach-3  Tabulation
+class Solution {
+    public int minCost(int n, int[] cuts) {
+        int m=cuts.length;
+        int new_cut[]=new int[m+2];
+        new_cut[0]=0; new_cut[m+1]=n;
+        for(int i=0;i<m;i++){
+            new_cut[i+1]=cuts[i];
+        }
+        //tabulation   
+        int dp[][]=new int[m+2][m+2];
+        //time comp : O(m*m)   space : O(m*m)
+        Arrays.sort(new_cut);
+        //base case return 0 so donot write again
+
+        for(int i=m;i>=1;i--){
+            for(int j=1;j<=m;j++){//as j always right of i we can assign j=i
+                if(i>j) continue;
+                int min_cost= 10000000;
+                for(int ind=i;ind<=j;ind++){
+                    int cost=new_cut[j+1]-new_cut[i-1]+dp[i][ind-1]+dp[ind+1][j];
+                    min_cost=Math.min(min_cost,cost);
+                }
+                dp[i][j]=min_cost;
+            }
+        }
+        return dp[1][m];
+    }
+}
+
+
+OR
+
+
+class Solution {
+    public int minCost(int n, int[] cuts) {
+        int m=cuts.length;
+        int new_cut[]=new int[m+2];
+        new_cut[0]=0; new_cut[m+1]=n;
+        for(int i=0;i<m;i++){
+            new_cut[i+1]=cuts[i];
+        }
+        //tabulation   
+        int dp[][]=new int[m+2][m+2];
+        //time comp : O(m*m)   space : O(m*m)
+        Arrays.sort(new_cut);
+        //base case return 0 so donot write again
+
+        for(int i=m;i>=1;i--){
+            for(int j=i;j<=m;j++){
+                if(i>j) continue;
+                int min_cost= 10000000;
+                for(int ind=i;ind<=j;ind++){
+                    int cost=new_cut[j+1]-new_cut[i-1]+dp[i][ind-1]+dp[ind+1][j];
+                    min_cost=Math.min(min_cost,cost);
+                }
+                dp[i][j]=min_cost;
+            }
+        }
+        return dp[1][m];
+    }
+}
