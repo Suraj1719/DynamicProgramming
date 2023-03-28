@@ -1,0 +1,73 @@
+approach - 1(recursion)
+class Solution {
+    int[] free_travel = new int[]{1, 7, 30};
+    public int mincostTickets(int[] days, int[] costs) {
+        //days = [1,4,6,7,8,20], costs = [2,7,15]
+        //recursion  time com : O(3^n) exponential  space : O(n) stack space
+
+        int n=days.length;
+        return f(0,days,costs);
+    }
+    int f(int i,int d[],int c[]){
+        if(i>=d.length) return 0;//base case
+
+        int total_cost=Integer.MAX_VALUE;
+        int poss_travel_day=i;
+        for(int k=0;k<3;k++){
+    while (poss_travel_day < d.length && d[poss_travel_day] < d[i] + free_travel[k])
+                poss_travel_day++;
+            total_cost = Math.min(total_cost, f(poss_travel_day,d,c) + c[k]);
+        }
+        return total_cost;
+    }
+}
+
+approach - 2 (memoization)
+class Solution {
+    int[] free_travel = new int[]{1, 7, 30};
+    public int mincostTickets(int[] days, int[] costs) {
+        //days = [1,4,6,7,8,20], costs = [2,7,15]
+        //memoization  time com : O(n) exponential  space : O(n)+O(n) stack space
+
+        int n=days.length;
+        int dp[]=new int[n];
+        Arrays.fill(dp,-1);
+        return f(0,days,costs,dp);
+    }
+    int f(int i,int d[],int c[],int dp[]){
+        if(i>=d.length) return 0;//base case
+
+        if(dp[i]!=-1) return dp[i];
+        int total_cost=Integer.MAX_VALUE;
+        int poss_travel_day=i;
+        for(int k=0;k<3;k++){
+    while (poss_travel_day < d.length && d[poss_travel_day] < d[i] + free_travel[k])
+                poss_travel_day++;
+            total_cost = Math.min(total_cost, f(poss_travel_day,d,c,dp) + c[k]);
+        }
+        return dp[i]=total_cost;
+    }
+}
+approach - 3(tabulation)  (remove extra stack space )
+class Solution {
+    int[] free_travel = new int[]{1, 7, 30};
+    public int mincostTickets(int[] d, int[] c) {
+        //days = [1,4,6,7,8,20], costs = [2,7,15]
+        //tabulation  time com : O(n*3) exponential  space : O(n)
+
+        int n=d.length;
+        int dp[]=new int[n+1];
+        //base case return 0
+        for(int i=n-1;i>=0;i--){
+            int total_cost=Integer.MAX_VALUE;
+            int poss_travel_day=i;
+            for(int k=0;k<3;k++){
+    while (poss_travel_day < d.length && d[poss_travel_day] < d[i] + free_travel[k])
+                poss_travel_day++;
+            total_cost = Math.min(total_cost, dp[poss_travel_day] + c[k]);
+        }
+        dp[i]=total_cost;
+        }
+        return dp[0];
+    }
+}
