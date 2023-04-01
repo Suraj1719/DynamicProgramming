@@ -1,0 +1,57 @@
+class Solution {
+    int n;
+    public int maxSumAfterPartitioning(int[] arr, int k) {
+        //bruteforce recursion
+        //time : exponential  space : O(n) statck space 
+        n=arr.length;
+        return f(0,arr,k);//index , array , k
+    }
+    int f(int ind,int a[],int k){
+        if(ind==a.length) return 0;
+
+        int len=0;
+        int max_val_subarray=Integer.MIN_VALUE;
+        int maxAns=Integer.MIN_VALUE;
+
+        for(int j=ind;j<Math.min(ind+k,n);j++){
+            len++;
+            max_val_subarray=Math.max(max_val_subarray,a[j]);
+            int sum=len*max_val_subarray + f(j+1,a,k);
+            maxAns=Math.max(maxAns,sum);
+        }
+        return maxAns;
+    }
+}
+
+approach - 2
+class Solution {
+    int n;
+    public int maxSumAfterPartitioning(int[] arr, int k) {
+        //memoization
+        //time : O(n)  space : O(n)+O(n) statck space 
+        n=arr.length;
+        int dp[]=new int[n];
+        Arrays.fill(dp,-1);
+        return f(0,arr,k,dp);//index , array , k
+    }
+    int f(int ind,int a[],int k,int dp[]){
+        if(ind==a.length) return 0;
+        if(dp[ind]!=-1) return dp[ind];
+
+        int len=0;
+        int max_val_subarray=Integer.MIN_VALUE;
+        int maxAns=Integer.MIN_VALUE;
+        
+
+        for(int j=ind;j<Math.min(ind+k,n);j++){
+            len++;
+            max_val_subarray=Math.max(max_val_subarray,a[j]);
+            int sum=len*max_val_subarray + f(j+1,a,k,dp);
+            maxAns=Math.max(maxAns,sum);
+        }
+        return dp[ind]=maxAns;
+    }
+}
+
+
+approach - 3 tabulation
